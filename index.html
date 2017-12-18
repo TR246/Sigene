@@ -28,13 +28,13 @@
                     <label>
                         <div class="label-text">幅</div>
                         <div class="input">
-                            <input v-model="size.width" type="number">mm
+                            <input data-bind="width" type="number">mm
                         </div>
                     </label>
                     <label>
                         <div class="label-text">高さ</div>
                         <div class="input">
-                            <input v-model="size.height" type="number">mm
+                            <input data-bind="height" type="number">mm
                         </div>
                     </label>
                 </section>
@@ -43,37 +43,15 @@
                     <label>
                         <div class="label-text">タイプ</div>
                         <div class="input">
-                            <select v-model="signType">
+                            <select data-bind="signType">
                                 <option value="jre-kanji">JR東日本 漢字主体</option>
                             </select>
                         </div>
                     </label>
                 </section>
             </section>
-            <section class="row">
-                <section v-for="form in generatorData[signType].forms">
-                    <h2>{{form.title}}</h2>
-                    <label v-for="content in form.contents">
-                        <!-- text, number のとき -->
-                        <template v-if="['text', 'number'].includes(content.type)">
-                            <div class="label-text">{{content.label}}</div>
-                            <div class="input">
-                                <input
-                                    :type="content.type"
-                                    v-model="signData[content.model]">
-                            </div>
-                        </template>
-                        <!-- toggle のとき -->
-                        <template v-if="['toggle'].includes(content.type)">
-                            <input type="checkbox" v-model="signData[content.model]">
-                            <span class="toggle"></span>
-                            {{content.label}}{{content.model}}
-                        </template>
-                    </label>
-                </section>
-            </section>
         </section>
-        <script src="https://unpkg.com/vue" defer></script>
+        <pre id="test"></pre>
         <script type="application/json" id="generatorData">
         {
             "jre-kanji": {
