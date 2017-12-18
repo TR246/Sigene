@@ -94,7 +94,7 @@ header ul li a:hover {
 }
 
 label {
-    margin: 5px 0;
+    margin: 10px 0;
     display: block;
     width: 100%;
 }
@@ -136,17 +136,20 @@ input[type="radio"] {
     display: inline-block;
     width: 40px;
     height: 20px;
+    margin-right: 5px;
     border: 2px solid #9E9E9E;
-    background-color: #E0E0E0;
+    background-color: #FAFAFA;
     border-color: #212121;
     border-radius: 10px;
     vertical-align: middle;
     position: relative;
-    opacity: .5;
     transition: 225ms;
 }
 :checked + .toggle {
-    opacity: 1;
+    background-color: #212121;
+}
+:disabled + .toggle {
+    opacity: .5;
 }
 .toggle::before {
     content: "";
@@ -156,10 +159,12 @@ input[type="radio"] {
     left: 2px;
     width: 12px;
     height: 12px;
-    background-color: #212121;
+    background-color: #EEE;
+    box-shadow: inset 0 0 0 6px #212121;
     border-radius: 50%;
     transition: 225ms;
 }
 :checked + .toggle::before {
     transform: translateX(20px);
+    box-shadow: inset 0 0 0 0 #212121;
 }
