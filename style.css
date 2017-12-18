@@ -1,0 +1,165 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background-color: #FAFAFA;
+    font-family: 'ヒラギノ角ゴシック Pro', 'Hiragino Kaku Gothic Pro', '源ノ角ゴシック JP', 'Noto Sans', 'M+ 1c', 游ゴシック体, 'Yu Gothic', YuGothic, メイリオ, Meiryo, sans-serif;
+}
+header {
+    background-color: #212121;
+    color: #FFF;
+    padding: 0 20px;
+    box-shadow: 0 0 10px #212121;
+    position: relative;
+}
+header .header-flex {
+    width: 100%;
+    height: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+header h1 {
+    height: 80px;
+    padding: 8px 0;
+    margin-right: 1em;
+    line-height: 80px;
+    display: flex;
+}
+header h1 img {
+    display: block;
+    width: auto;
+    height: 64px;
+}
+header h1 small {
+    display: block;
+    height: 100%;
+    padding: 32px 0 0 10px;
+    font-size: .5em;
+    color: rgba(255, 255, 255, .7);
+    font-weight: normal;
+    line-height: 32px;
+    white-space: nowrap;
+}
+header ul {
+    display: flex;
+    height: 100%;
+    padding: 8px 0;
+    list-style: none;
+}
+header ul li {
+    display: block;
+    height: 100%;
+    margin: 0 2px;
+}
+header ul li a {
+    display: block;
+    padding: 0 1em;
+    line-height: 64px;
+    color: #FFF;
+    text-decoration: none;
+    border-radius: 2px;
+    position: relative;
+    transition: 225ms;
+}
+header ul li a:hover {
+    background-color: rgba(255, 255, 255, .2);
+}
+
+.canvas {
+    padding: 20px;
+    max-height: 40vh;
+    background-color: #424242;
+}
+.form {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+.row section {
+    margin: 20px;
+    padding: 10px;
+    border-top: 1px solid #9E9E9E;
+    border-bottom: 1px solid #9E9E9E;
+}
+
+label {
+    margin: 5px 0;
+    display: block;
+    width: 100%;
+}
+.label-text {
+    font-size: .8em;
+    margin-bottom: 2px;
+}
+input[type="text"],
+input[type="number"],
+select {
+    display: inline-block;
+    margin-right: 2px;
+    border: 1px solid #9E9E9E;
+    outline: 0;
+    padding: 5px;
+    border-radius: 2px;
+    transition: 225ms;
+}
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+    border-color: #2196F3;
+}
+input[type="text"]:invalid,
+input[type="number"]:invalid {
+    border-color: #f44336;
+}
+input[type="text"] {
+    width: 200px;
+}
+input[type="number"] {
+    width: 100px;
+}
+input[type="checkbox"],
+input[type="radio"] {
+    display: none;
+}
+.toggle {
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    border: 2px solid #9E9E9E;
+    background-color: #E0E0E0;
+    border-color: #212121;
+    border-radius: 10px;
+    vertical-align: middle;
+    position: relative;
+    opacity: .5;
+    transition: 225ms;
+}
+:checked + .toggle {
+    opacity: 1;
+}
+.toggle::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 12px;
+    height: 12px;
+    background-color: #212121;
+    border-radius: 50%;
+    transition: 225ms;
+}
+:checked + .toggle::before {
+    transform: translateX(20px);
+}
