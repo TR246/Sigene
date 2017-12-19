@@ -30,6 +30,7 @@
                 break;
         }
     };
+    const bindElementProp = (el, attr) => {};
     const bindingData = {
         width: 2250,
         height: 600,
@@ -44,8 +45,14 @@
             staNameKorean: "도쿄"
         }
     };
+    const bindFuncs = {
+        lightDisable(){}
+    };
     Array.from(document.getElementById("general").querySelectorAll("[data-bind]"))
         .forEach(el => bindElement(el, bindingData, el.getAttribute("data-bind")));
     Array.from(document.getElementById("generator").querySelectorAll("[data-bind]"))
         .forEach(el => bindElement(el, bindingData.signData, el.getAttribute("data-bind")));
+
+    Array.from(document.querySelectorAll("[data-prop]"))
+        .forEach(el => bindElementProp(el, el.getAttribute("data-prop").split("|").map(c => c.split(",").map(t => t.trim()))));
 })();
