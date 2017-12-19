@@ -1,58 +1,56 @@
 (() => {
-    //バインド
-    const bindedSymbol = Symbol();
-    const propBindedSymbol = Symbol();
-    const watchers = {};
-    const bindElement = (el, obj, key, onchange) => {
-        if(el[bindedSymbol]){ return; }
-        el[bindedSymbol] = true;
-        switch(el.tagName.toLowerCase()){
-            case "input":
-                if(["text", "number"].includes(el.type)){
-                    el.value = obj[key];
-                    el.addEventListener("input", () => {
-                        const value = el.value;
-                        obj[key] = value;
-                        if(onchange) onchange(key, value);
-                        if(watchers[key]) watchers[key].forEach(fn => fn(value));
-                    });
+    const getByDotKey = (obj, key) => key.split(".").reduce((obj, key) => obj[key.trim()], obj);
+    const setByDotKey = (obj, key, value) => {
+        const keys = key.split(".");
+        const last = keys.pop();
+        const sObj = getByDotKey(obj, keys.join("."));
+        sObj[last] = value;
+    };
+
+    const vm = new Vue({
+        el: ".form",
+        data: {
+            macrons: ["Ā", "Ē", "Ī", "Ō", "Ū", "ā", "ē", "ī", "ō", "ū"],
+            size: {
+                width: 2250,
+                height: 600
+            },
+            signType: "jre-kanji",
+            signData: {
+                board: {
+                    type: "led",
+                    light: true
+                },
+                numbering: true,
+                sta: {
+                    name: {
+                        kanji: "市川",
+                        english: "Ichikawa",
+                        kana: "いちかわ",
+                        chinese: "市川",
+                        korean: "이치카와"
+                    },
+                    numbering: "JB 27",
+                    enableTlc: false,
+                    tlc: ""
                 }
-                break;
-
-            case "select":
-                el.selectedIndex = obj[key];
-                el.addEventListener("change", () => {
-                    const value = el.selectedIndex;
-                    obj[key] = value;
-                    if(onchange) onchange(key, value);
-                    if(watchers[key]) watchers[key].forEach(fn => fn(value));
-                });
-                break;
+            }
+        },
+        computed: {
+            enableBoardLight(){
+                return ["floure", "led"].includes(this.signData.board.type);
+            }
+        },
+        methods: {
+            changeBoardType(){
+                if(!this.enableBoardLight)
+                    this.signData.board.light = false;
+            },
+            formatUppercase(key){
+                setByDotKey(this, key, getByDotKey(this, key)
+                    .replace(/[Ａ-Ｚａ-ｚ０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 65248))
+                    .toUpperCase());
+            }
         }
-    };
-    const bindElementProp = (el, attr) => {};
-    const bindingData = {
-        width: 2250,
-        height: 600,
-        signType: 0,
-        signData: {
-            boardType: 2,
-            boardLighting: true,
-            staNameKanji: "東京",
-            staNameEnglish: "Tōkyō",
-            staNameKana: "とうきょう",
-            staNameChinese: "东京",
-            staNameKorean: "도쿄"
-        }
-    };
-    const bindFuncs = {
-        lightDisable(){}
-    };
-    Array.from(document.getElementById("general").querySelectorAll("[data-bind]"))
-        .forEach(el => bindElement(el, bindingData, el.getAttribute("data-bind")));
-    Array.from(document.getElementById("generator").querySelectorAll("[data-bind]"))
-        .forEach(el => bindElement(el, bindingData.signData, el.getAttribute("data-bind")));
-
-    Array.from(document.querySelectorAll("[data-prop]"))
-        .forEach(el => bindElementProp(el, el.getAttribute("data-prop").split("|").map(c => c.split(",").map(t => t.trim()))));
+    });
 })();
