@@ -16,35 +16,35 @@
                 height: 600
             },
             signType: "jre-kanji",
-            signData: {
-                board: {
-                    type: "led",
-                    light: true
+            signBoard: {
+                type: "led",
+                light: true
+            },
+            numbering: true,
+            branchRight: false,
+            branchLeft: false,
+            sta: {
+                name: {
+                    kanji: "市川",
+                    english: "Ichikawa",
+                    kana: "いちかわ",
+                    chinese: "市川",
+                    korean: "이치카와"
                 },
-                numbering: true,
-                sta: {
-                    name: {
-                        kanji: "市川",
-                        english: "Ichikawa",
-                        kana: "いちかわ",
-                        chinese: "市川",
-                        korean: "이치카와"
-                    },
-                    numbering: "JB 27",
-                    enableTlc: false,
-                    tlc: ""
-                }
+                numbering: "JB 27",
+                enableTlc: false,
+                tlc: ""
             }
         },
         computed: {
             enableBoardLight(){
-                return ["floure", "led"].includes(this.signData.board.type);
+                return ["floure", "led"].includes(this.signBoard.type);
             }
         },
         methods: {
             changeBoardType(){
                 if(!this.enableBoardLight)
-                    this.signData.board.light = false;
+                    this.signBoard.light = false;
             },
             formatUppercase(key){
                 setByDotKey(this, key, getByDotKey(this, key)
