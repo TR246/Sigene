@@ -1,4 +1,7 @@
 (() => {
+    //Canvas
+    const update = function(){};
+
     //Vue
     const replaceProperty = (obj, key, replacer) => {
         const keys = key.split(".");
@@ -53,7 +56,7 @@
                         c => String.fromCharCode(c.charCodeAt(0) - 65248))
                         .toUpperCase());
             },
-            update(){}
+            update
         }
     });
 })();
