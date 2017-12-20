@@ -1,14 +1,14 @@
 (() => {
-    const getByDotKey = (obj, key) => key.split(".").reduce((obj, key) => obj[key.trim()], obj);
-    const setByDotKey = (obj, key, value) => {
+    //Vue
+    const replaceProperty = (obj, key, replacer) => {
         const keys = key.split(".");
         const last = keys.pop();
-        const sObj = getByDotKey(obj, keys.join("."));
-        sObj[last] = value;
+        const sObj = keys.reduce((obj, key) => obj[key.trim()], obj);
+        sObj[last] = replacer(sObj[last]);
     };
-
     const vm = new Vue({
-        el: ".form",
+        el: "#vm",
+        mounted: update,
         data: {
             macrons: ["Ā", "Ē", "Ī", "Ō", "Ū", "ā", "ē", "ī", "ō", "ū"],
             size: {
@@ -47,13 +47,13 @@
                     this.signBoard.light = false;
             },
             formatUppercase(key){
-                setByDotKey(this, key, getByDotKey(this, key)
-                    .replace(/[Ａ-Ｚａ-ｚ０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 65248))
-                    .toUpperCase());
+                replaceProperty(
+                    this, key,
+                    v => v.replace(/[Ａ-Ｚａ-ｚ０-９]/g,
+                        c => String.fromCharCode(c.charCodeAt(0) - 65248))
+                        .toUpperCase());
             },
-            update(){
-                console.log("update");
-            }
+            update(){}
         }
     });
 })();

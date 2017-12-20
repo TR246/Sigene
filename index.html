@@ -18,10 +18,10 @@
                 </ul>
             </div>
         </header>
-        <section class="canvas">
-            <canvas id="canvas1"></canvas>
+        <section id="canvasArea">
+            <canvas id="uiCanvas" width="2250" height="600"></canvas>
         </section>
-        <section class="form" @input="update" @change="update">
+        <section id="vm" class="form" v-cloak @input="update" @change="update">
             <section class="row">
                 <section>
                     <h2>駅名標サイズ</h2>
