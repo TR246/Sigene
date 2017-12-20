@@ -21,7 +21,7 @@
         <section class="canvas">
             <canvas id="canvas1"></canvas>
         </section>
-        <section class="form">
+        <section class="form" @input="update" @change="update">
             <section class="row">
                 <section>
                     <h2>駅名標サイズ</h2>
@@ -76,16 +76,16 @@
                     <label>
                         <input
                             type="checkbox"
-                            v-model="branchRight">
+                            v-model="branchLeft">
                         <span class="toggle"></span>
-                        右分岐
+                        左分岐
                     </label>
                     <label>
                         <input
                             type="checkbox"
-                            v-model="branchLeft">
+                            v-model="branchRight">
                         <span class="toggle"></span>
-                        左分岐
+                        右分岐
                     </label>
                 </section>
                 <section>
@@ -101,7 +101,7 @@
                         <input
                             type="text"
                             v-model="sta.name.english">
-                        <div class="ex-input">
+                        <div class="ex-input grid">
                             <div v-for="c in macrons" @click="sta.name.english += c">{{c}}</div>
                         </div>
                     </label>
@@ -116,20 +116,18 @@
                         <input
                             type="text"
                             v-model="sta.name.chinese">
+                        <div class="ex-input">
+                            <a :href="'https://translate.google.com/?hl=ja#ja/zh-CN/' + encodeURIComponent(sta.name.kanji)">Google翻訳を開く</a>
+                        </div>
                     </label>
                     <label v-show="numbering">
                         <div class="label-text">駅名 韓国語(ハングル)</div>
                         <input
                             type="text"
                             v-model="sta.name.korean">
-                    </label>
-                    <label v-show="numbering">
-                        <div class="label-text">ナンバリング</div>
-                        <input
-                            type="text"
-                            v-model="sta.numbering"
-                            pattern="^[A-Z]{2}\s*(-\s*)?[0-9]{2}$"
-                            @input="formatUppercase('sta.numbering')">
+                        <div class="ex-input">
+                            <a :href="'https://translate.google.com/?hl=ja#ja/ko/' + encodeURIComponent(sta.name.kanji)">Google翻訳を開く</a>
+                        </div>
                     </label>
                     <label v-show="numbering">
                         <input
@@ -143,91 +141,21 @@
                         <input
                             type="text"
                             v-model="sta.tlc"
-                            pattern="^[A-Z]{3}$"
+                            pattern="^[A-ZＡ-Ｚ]{3}$"
                             @input="formatUppercase('sta.tlc')">
+                        <div class="invalid-message">アルファベット3文字で入力してください</div>
+                    </label>
+                    <label v-show="numbering">
+                        <div class="label-text">ナンバリング</div>
+                        <input
+                            type="text"
+                            v-model="sta.numbering"
+                            pattern="^[A-Za-zＡ-Ｚａ-ｚ]{2}\s*(-\s*)?[0-9０-９]{2}$"
+                            @input="formatUppercase('sta.numbering')">
+                        <div class="invalid-message">アルファベット2文字と数字2桁で入力してください</div>
                     </label>
                 </section>
             </section>
-            <!--<section id="general" class="row">
-                <section>
-                    <h2>駅名標サイズ</h2>
-                    <label>
-                        <div class="label-text">幅</div>
-                        <div class="input">
-                            <input data-bind="width" type="number">mm
-                        </div>
-                    </label>
-                    <label>
-                        <div class="label-text">高さ</div>
-                        <div class="input">
-                            <input data-bind="height" type="number">mm
-                        </div>
-                    </label>
-                </section>
-                <section>
-                    <h2>駅名標タイプ</h2>
-                    <label>
-                        <div class="label-text">タイプ</div>
-                        <div class="input">
-                            <select id="signType" data-bind="signType">
-                                <option value="jre-kanji">JR東日本 漢字主体</option>
-                            </select>
-                        </div>
-                    </label>
-                </section>
-            </section>
-            <section id="generator" class="row">
-                <section>
-                    <h2>駅名標筐体</h2>
-                    <label>
-                        <div class="label-text">筐体タイプ</div>
-                        <select data-bind="boardType">
-                            <option value="none">なし</option>
-                            <option value="fluore">蛍光灯</option>
-                            <option value="led">LED</option>
-                            <option value="nonLight">無電照</option>
-                        </select>
-                    </label>
-                    <label>
-                        <input data-bind="boardLighting" data-prop="boardType | lightDisable" type="checkbox">
-                        <span class="toggle"></span>
-                        点灯する
-                    </label>
-                </section>
-                <section>
-                    <h2>駅名・ナンバリング</h2>
-                    <label>
-                        <div class="label-text">駅名 漢字</div>
-                        <div class="input">
-                            <input data-bind="staNameKanji" type="text">
-                        </div>
-                    </label>
-                    <label>
-                        <div class="label-text">駅名 英語</div>
-                        <div class="input">
-                            <input data-bind="staNameEnglish" type="text">
-                        </div>
-                    </label>
-                    <label>
-                        <div class="label-text">駅名 ひらがな</div>
-                        <div class="input">
-                            <input data-bind="staNameKana" type="text">
-                        </div>
-                    </label>
-                    <label>
-                        <div class="label-text">駅名 中国語(簡体字)</div>
-                        <div class="input">
-                            <input data-bind="staNameChinese" type="text">
-                        </div>
-                    </label>
-                    <label>
-                        <div class="label-text">駅名 韓国語(ハングル)</div>
-                        <div class="input">
-                            <input data-bind="staNameKorean" type="text">
-                        </div>
-                    </label>
-                </section>
-            </section>-->
         </section>
 
         <script src="https://unpkg.com/vue" defer></script>

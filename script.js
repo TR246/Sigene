@@ -50,6 +50,9 @@
                 setByDotKey(this, key, getByDotKey(this, key)
                     .replace(/[Ａ-Ｚａ-ｚ０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 65248))
                     .toUpperCase());
+            },
+            update(){
+                console.log("update");
             }
         }
     });
