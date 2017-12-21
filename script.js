@@ -1,10 +1,5 @@
 (() => {
     //Canvas
-    const canvasArea = document.getElementById("canvasArea");
-
-    const canvasUI = document.getElementById("canvasUI");
-    const ctxUI = canvasUI.getContext("2d");
-
     const contain = (width1, height1, width2, height2) => {
         //r1, r2は数値が大きいほど横長
         const r1 = width1 / height1;
@@ -13,26 +8,62 @@
             {width: r2 * height1, height: height1} : //親のほうが横長 高さをあわせる
             {width: width1, height: width1 / r2}; //子のほうが横長 幅をあわせる
     };
+
+    const frames = {
+        none: {
+            padding: {
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            }
+        },
+        floure: {
+            padding: {
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            }
+        },
+        led: {
+            padding: {
+                top: 90,
+                left: 70,
+                right: 70,
+                bottom: 37
+            }
+        },
+        nonLight: {
+            padding: {
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            }
+        }
+    };
+
     //描画
+    const canvasUI = new Canvas("#canvasUI");
     const update = function(){
         const {size: {width, height}, signType, signBoard, numbering, branchRight, branchLeft, sta} = this;
-        
-        const {width: cw, height: ch} = contain(document.body.clientWidth - 40, window.innerHeight * 0.5 - 40, width, height);
-        const cWidth = Math.floor(cw) * devicePixelRatio;
-        const cHeight = Math.floor(ch) * devicePixelRatio;
 
-        canvasUI.width = cWidth;
-        canvasUI.height = cHeight;
+        const fp = frames[signBoard.type].padding;
 
-        ctxUI.fillStyle = "#FFF";
-        ctxUI.fillRect(0, 0, cWidth, cHeight);
+        const fw = width + fp.left + fp.right;
+        const fh = height + fp.top + fp.bottom;
         
-        ctxUI.strokeStyle = "#000";
-        ctxUI.lineWidth = 50;
-        ctxUI.beginPath();
-        ctxUI.moveTo(50, 50);
-        ctxUI.lineTo(200, 200);
-        ctxUI.stroke();
+        const {width: _cw, height: _ch} = contain(document.body.clientWidth, window.innerHeight * 0.5, fw, fh);
+        const cw = Math.floor(_cw) * devicePixelRatio;
+        const ch = Math.floor(_ch) * devicePixelRatio;
+
+        canvasUI.width = cw;
+        canvasUI.height = ch;
+
+        canvasUI.backgroundColor = "#FFF";
+
+        const mm = cw / fw;
     };
 
     //Vue
