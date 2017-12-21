@@ -20,7 +20,7 @@
             </div>
         </header>
         <section id="canvasArea">
-            <canvas id="uiCanvas" width="2250" height="600"></canvas>
+            <canvas id="canvasUI" width="2250" height="600"></canvas>
         </section>
         <section id="vm" class="form" v-cloak @input="update" @change="update">
             <section class="row">
@@ -118,7 +118,7 @@
                             type="text"
                             v-model="sta.name.chinese">
                         <div class="ex-input">
-                            <a :href="'https://translate.google.com/?hl=ja#ja/zh-CN/' + encodeURIComponent(sta.name.kanji)">Google翻訳を開く</a>
+                            <a target="_blank" :href="'https://translate.google.com/?hl=ja#ja/zh-CN/' + encodeURIComponent(sta.name.kanji)">Google翻訳を開く</a>
                         </div>
                     </label>
                     <label v-show="numbering">
@@ -127,7 +127,7 @@
                             type="text"
                             v-model="sta.name.korean">
                         <div class="ex-input">
-                            <a :href="'https://translate.google.com/?hl=ja#ja/ko/' + encodeURIComponent(sta.name.kanji)">Google翻訳を開く</a>
+                            <a target="_blank" :href="'https://translate.google.com/?hl=ja#ja/ko/' + encodeURIComponent(sta.name.kanji)">Google翻訳を開く</a>
                         </div>
                     </label>
                     <label v-show="numbering">

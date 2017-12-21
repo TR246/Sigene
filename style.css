@@ -79,14 +79,12 @@ header ul li a:hover {
 }
 
 #canvasArea {
-    padding: 20px;
+    padding: 5vh;
     max-height: 50vh;
     background-color: #424242;
-}
-#canvasArea canvas {
-    width: 100%;
-    height: 100%;
-    object-fit: scale-down;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 [v-cloak] {
     display: none;

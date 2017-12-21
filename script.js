@@ -1,6 +1,33 @@
 (() => {
     //Canvas
-    const update = function(){};
+    const canvasArea = document.getElementById("canvasArea");
+
+    const canvasUI = document.getElementById("canvasUI");
+    const ctxUI = canvasUI.getContext("2d");
+
+    const contain = (width1, height1, width2, height2) => {
+        //r1, r2は数値が大きいほど横長
+        const r1 = width1 / height1;
+        const r2 = width2 / height2;
+        return r1 > r2?
+            {width: r2 * height1, height: height1} : //親のほうが横長 高さをあわせる
+            {width: width1, height: width1 / r2}; //子のほうが横長 幅をあわせる
+    };
+    //描画
+    const update = function(){
+        const {size: {width, height}, signType, signBoard, numbering, branchRight, branchLeft, sta} = this;
+        
+        const {width: cWidth, height: cHeight} = contain(document.body.clientWidth - window.innerHeight * 0.1, window.innerHeight * 0.4, width, height);
+
+        canvasUI.width = cWidth;
+        canvasUI.height = cHeight;
+        
+        ctxUI.fillStyle = "#FFF";
+        ctxUI.fillRect(0, 0, cWidth, cHeight);
+
+        ctxUI.fillStyle = "#000",
+        ctxUI.fillRect(0, 0, 100, 100);
+    };
 
     //Vue
     const replaceProperty = (obj, key, replacer) => {
@@ -59,4 +86,6 @@
             update
         }
     });
+
+    window.addEventListener("resize", () => update.call(vm));
 })();
