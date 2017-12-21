@@ -17,16 +17,17 @@
     const update = function(){
         const {size: {width, height}, signType, signBoard, numbering, branchRight, branchLeft, sta} = this;
         
-        const {width: cWidth, height: cHeight} = contain(document.body.clientWidth - window.innerHeight * 0.1, window.innerHeight * 0.4, width, height);
+        const {width: cWidth, height: cHeight} = contain(document.body.clientWidth - 40, window.innerHeight * 0.5 - 40, width, height);
 
         canvasUI.width = cWidth;
         canvasUI.height = cHeight;
         
-        ctxUI.fillStyle = "#FFF";
-        ctxUI.fillRect(0, 0, cWidth, cHeight);
-
-        ctxUI.fillStyle = "#000",
-        ctxUI.fillRect(0, 0, 100, 100);
+        ctxUI.strokeStyle = "#000";
+        ctxUI.lineWidth = 5;
+        ctxUI.beginPath();
+        ctxUI.moveTo(10, 10);
+        ctxUI.lineTo(200, 200);
+        ctxUI.stroke();
     };
 
     //Vue

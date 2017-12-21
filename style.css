@@ -80,7 +80,7 @@ header ul li a:hover {
 }
 
 #canvasArea {
-    padding: 5vh;
+    padding: 20px;
     max-height: 50vh;
     background-color: #424242;
     display: flex;
