@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
 body {
@@ -226,13 +227,15 @@ input[type="radio"] {
 /* モバイル */
 @media screen and (max-width: 800px){
     .ex-input {
-        display: flex;
         width: 100vw;
         height: 50px;
         position: fixed;
         left: 0;
         bottom: 0;
         transform: translateY(50px);
+    }
+    .ex-input.grid {
+        display: flex;
     }
     :focus + .ex-input {
         transform: none;
