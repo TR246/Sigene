@@ -46,6 +46,15 @@
 
     //描画
     const canvasUI = new Canvas("#canvasUI");
+    canvasUI.addObject({
+        id: "aaa",
+        type: "rect",
+        width: 100, 
+        height: 100,
+        x: 50,
+        y: 50,
+        fill: "#000"
+    }, 0);
     const update = function(){
         const {size: {width, height}, signType, signBoard, numbering, branchRight, branchLeft, sta} = this;
 
@@ -63,7 +72,7 @@
 
         canvasUI.backgroundColor = "#FFF";
 
-        const mm = cw / fw;
+        canvasUI.scale = cw / fw;
     };
 
     //Vue

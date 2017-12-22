@@ -1,15 +1,36 @@
 const Canvas = (() => {
     //シンボル
     const S = {
-        backgroundColor: Symbol(),
-        objects: Symbol()
+        objId: Symbol("objId"),
+        objType: Symbol("objType"),
+        backgroundColor: Symbol("backgroundColor"),
+        objects: Symbol("objects"),
+        scale: Symbol("scale")
     };
 
+    const objIds = [];
+
     //canvasに描くオブジェクト
-    class Obj {
+    class CanvasObject {
         constructor(options){
-            if(options === undefined){ throw new Error(""); }
-            const {type} = options;
+            if(options === undefined){ throw new Error("Canvas Object コンストラクターには引数が必要です。"); }
+            const {type, id} = options;
+            this.id = id;
+            this[S.objId] = id;
+            objIds.push(id);
+            this.type = type;
+            this[S.objType] = type;
+        }
+
+        get type(){ return this[S.objType]; }
+        set type(val){
+            if(this.type) throw new Error("'type' プロパティは変更できません");
+        }
+
+        get id(){ return this[S.objId]; }
+        set id(id){
+            objIds.splice(objIds.indexOf(this[S.objId]), 1, id);
+            this[S.objId] = id;
         }
     }
 
@@ -19,7 +40,7 @@ const Canvas = (() => {
         }else if(typeof arg === "string"){
             arg = document.querySelector(arg);
         }else{
-            throw new TypeError("The argument must be an HTMLCanvasElement or a selector.");
+            throw new TypeError("Canvas コンストラクターの引数は HTMLCanvasElement または セレクタ文字列 でなければなりません");
         }
         return checkCanvasElem(arg);
     }
@@ -30,7 +51,9 @@ const Canvas = (() => {
             this.width = canvas.width;
             this.height = canvas.height;
             this.backgroundColor = "rgba(0, 0, 0, 0)";
-            this[S.objects] = [];
+            this[S.objects] = [[]];
+            this.scale = 1;
+            this[S.scale] = 1;
         }
 
         get width(){ return this.element.width; }
@@ -42,24 +65,41 @@ const Canvas = (() => {
         get backgroundColor(){ return this.element[S.backgroundColor]; }
         set backgroundColor(color){
             this.clear();
-            const ctx = this.context;
-            ctx.save();
-            ctx.fillStyle = color;
-            ctx.fillRect(0, 0, this.width, this.height);
-            ctx.restore();
             this.element[S.backgroundColor] = color;
         }
 
-        clear(){
-            this.context.clearRect(0, 0, this.width, this.height);
+        get scale(){ return this[S.scale]; }
+        set scale(val){
+            this[S.scale] = val;
+            this.draw();
         }
 
-        addObject(object){
-            if(!(object instanceof Obj)){ object = new Obj(object); }
+        addObject(object, layerIdx){
+            if(!(object instanceof CanvasObject)){ object = new CanvasObject(object); }
+            const objects = this[S.objects];
+            if(!objects[layerIdx]){ objects[layerIdx] = []; }
+            objects[layerIdx].push(object);
+        }
+
+        clear(){
+            const ctx = this.context;
+            ctx.save();
+            ctx.clearRect(0, 0, this.width, this.height);
+            ctx.fillStyle = this.element[S.backgroundColor];
+            ctx.fillRect(0, 0, this.width, this.height);
+            ctx.restore();
+        }
+
+        draw(){
+            this.clear();
+            const ctx = this.context;
+            ctx.save();
+            console.log(this);
+            ctx.restore();
         }
     }
 
-    Canvas.Object = Obj;
+    Canvas.Object = CanvasObject;
 
     return Canvas;
 })();
