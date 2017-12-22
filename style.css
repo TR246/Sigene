@@ -85,7 +85,7 @@ header ul li a:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 0 10px #212121;
+    box-shadow: 0 0 5px #212121;
 }
 [v-cloak] {
     display: none;

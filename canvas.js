@@ -3,23 +3,49 @@ const Canvas = (() => {
     const S = {
         objId: Symbol("objId"),
         objType: Symbol("objType"),
+        methodArgs: Symbol("methodArgs"),
         backgroundColor: Symbol("backgroundColor"),
-        objects: Symbol("objects"),
+        layers: Symbol("layers"),
         scale: Symbol("scale")
     };
 
     const objIds = [];
 
     //canvasに描くオブジェクト
+    const reqArgs = {
+        rect: ["x", "y", "width", "height"]
+    };
+    const listeners = {};
     class CanvasObject {
         constructor(options){
-            if(options === undefined){ throw new Error("Canvas Object コンストラクターには引数が必要です。"); }
+            if(options === undefined) throw new Error("Canvas Object コンストラクターには引数が必要です");
             const {type, id} = options;
+
             this.id = id;
             this[S.objId] = id;
             objIds.push(id);
+
             this.type = type;
             this[S.objType] = type;
+
+            listeners[id] = listeners[id] || [];
+
+            this[S.methodArgs] = [];
+            const self = this;
+            reqArgs[type].forEach((arg, i) => {
+                if(!(arg in options)) throw new Error(`${type} には ${arg} が必要です`);
+                self[S.methodArgs].push(options[arg]);
+                Object.defineProperty(self, arg, {
+                    get(){ return self[S.methodArgs][i] },
+                    set(val){
+                        self[S.methodArgs][i] = val;
+                        listeners[id].forEach(f => f());
+                    }
+                });
+            });
+            if("fill" in options) this.fill = options.fill;
+            if("stroke" in options) this.stroke = options.stroke;
+            this.strokeThickness = options.strokeThickness || 1;
         }
 
         get type(){ return this[S.objType]; }
@@ -51,7 +77,7 @@ const Canvas = (() => {
             this.width = canvas.width;
             this.height = canvas.height;
             this.backgroundColor = "rgba(0, 0, 0, 0)";
-            this[S.objects] = [[]];
+            this[S.layers] = [[]];
             this.scale = 1;
             this[S.scale] = 1;
         }
@@ -64,8 +90,8 @@ const Canvas = (() => {
 
         get backgroundColor(){ return this.element[S.backgroundColor]; }
         set backgroundColor(color){
-            this.clear();
             this.element[S.backgroundColor] = color;
+            this.clear();
         }
 
         get scale(){ return this[S.scale]; }
@@ -76,15 +102,17 @@ const Canvas = (() => {
 
         addObject(object, layerIdx){
             if(!(object instanceof CanvasObject)){ object = new CanvasObject(object); }
-            const objects = this[S.objects];
+            const objects = this[S.layers];
             if(!objects[layerIdx]){ objects[layerIdx] = []; }
+            listeners[object.id].push(() => this.draw());
             objects[layerIdx].push(object);
         }
 
         clear(){
             const ctx = this.context;
             ctx.save();
-            ctx.clearRect(0, 0, this.width, this.height);
+            ctx.clearRect(0, 0, this.element.width, this.element.height);
+            ctx.beginPath();
             ctx.fillStyle = this.element[S.backgroundColor];
             ctx.fillRect(0, 0, this.width, this.height);
             ctx.restore();
@@ -93,9 +121,26 @@ const Canvas = (() => {
         draw(){
             this.clear();
             const ctx = this.context;
-            ctx.save();
-            console.log(this);
-            ctx.restore();
+            this[S.layers].forEach(layer => {
+                layer.forEach(object => {
+                    ctx.save();
+                    switch(object.type.toLowerCase()){
+                        case "rect":
+                            ctx.rect(...object[S.methodArgs]);
+                            break;
+                    }
+                    if("fill" in object){
+                        ctx.fillStyle = object.fill;
+                        ctx.fill();
+                    }
+                    if("stroke" in object){
+                        ctx.strokeStyle = object.stroke;
+                        ctx.lineWidth = object.strokeThickness;
+                        ctx.stroke();
+                    }
+                    ctx.restore();
+                });
+            });
         }
     }
 

@@ -45,16 +45,19 @@
     };
 
     //描画
-    const canvasUI = new Canvas("#canvasUI");
-    canvasUI.addObject({
+    window.canvasUI = new Canvas("#canvasUI");
+    window.rectObject = new Canvas.Object({
         id: "aaa",
         type: "rect",
         width: 100, 
         height: 100,
         x: 50,
         y: 50,
-        fill: "#000"
-    }, 0);
+        fill: "#888",
+        stroke: "rgba(0, 0, 0, 0.5)",
+        strokeThickness: 10
+    });
+    canvasUI.addObject(rectObject, 0);
     const update = function(){
         const {size: {width, height}, signType, signBoard, numbering, branchRight, branchLeft, sta} = this;
 
