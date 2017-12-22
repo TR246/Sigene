@@ -88,6 +88,16 @@ const Canvas = (() => {
         get height(){ return this.element.height; }
         set height(val){ this.element.height = val; }
 
+        get imgWidth(){ return this.width / this.scale; }
+        set imgWidth(val){
+            this.scale = this.width / val;
+        }
+
+        get imgHeight(){ return this.height / this.scale; }
+        set imgHeight(val){
+            this.scale = this.height / val;
+        }
+
         get backgroundColor(){ return this.element[S.backgroundColor]; }
         set backgroundColor(color){
             this.element[S.backgroundColor] = color;
@@ -126,7 +136,19 @@ const Canvas = (() => {
                     ctx.save();
                     switch(object.type.toLowerCase()){
                         case "rect":
-                            ctx.rect(...object[S.methodArgs]);
+                            ctx.rect(...object[S.methodArgs].map(value => {
+                                if(isFinite(value)) return value * this.scale;
+                                else{
+                                    const arr = /(\d+)(\D+)/.exec(value);
+                                    if(arr === null) throw new Error("無効な値です");
+
+                                    return (arr[1] - 0) * {
+                                        "": 1,
+                                        "cw": this.imgWidth / 100,
+                                        "ch": this.imgHeight / 100
+                                    }[arr[2]] * this.scale;
+                                }
+                            }));
                             break;
                     }
                     if("fill" in object){
@@ -135,7 +157,7 @@ const Canvas = (() => {
                     }
                     if("stroke" in object){
                         ctx.strokeStyle = object.stroke;
-                        ctx.lineWidth = object.strokeThickness;
+                        ctx.lineWidth = object.strokeThickness * this.scale;
                         ctx.stroke();
                     }
                     ctx.restore();
