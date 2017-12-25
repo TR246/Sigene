@@ -20,19 +20,25 @@
             </div>
         </header>
         <section id="canvasArea">
-            <canvas id="canvasUI" width="2250" height="600"></canvas>
+            <canvas id="canvas1" width="2250" height="600"></canvas>
         </section>
         <section id="vm" class="form" v-cloak @input="update" @change="update">
+            <section class="row">
+                <section>
+                    <button @click="save">入力内容を保存</button>
+                    <button @click="saveAsPNG">画像として保存</button>
+                </section>
+            </section>
             <section class="row">
                 <section>
                     <h2>駅名標サイズ</h2>
                     <label>
                         <div class="label-text">幅</div>
-                        <input v-model.number="size.width" type="number">mm
+                        <input v-model.number="size.width" type="number" step="10" min="0">mm
                     </label>
                     <label>
                         <div class="label-text">高さ</div>
-                        <input v-model.number="size.height" type="number">mm
+                        <input v-model.number="size.height" type="number" step="10" min="0">mm
                     </label>
                 </section>
                 <section>
@@ -160,7 +166,6 @@
         </section>
 
         <script src="https://unpkg.com/vue" defer></script>
-        <script src="canvas.js" defer></script>
         <script src="script.js" defer></script>
     </body>
 </html>
