@@ -83,16 +83,16 @@
                     <label>
                         <input
                             type="checkbox"
-                            v-model="branchLeft">
+                            v-model="branchRight">
                         <span class="toggle"></span>
-                        左分岐
+                        右分岐
                     </label>
                     <label>
                         <input
                             type="checkbox"
-                            v-model="branchRight">
+                            v-model="branchLeft">
                         <span class="toggle"></span>
-                        右分岐
+                        左分岐
                     </label>
                 </section>
                 <section>
@@ -149,18 +149,257 @@
                             type="text"
                             v-model="sta.tlc"
                             pattern="^[A-ZＡ-Ｚ]{3}$"
-                            @input="formatUppercase('sta.tlc')">
+                            @input="sta.tlc = formatUppercase($event.target.value)">
                         <div class="invalid-message">アルファベット3文字で入力してください</div>
                     </label>
-                    <label v-show="numbering">
-                        <div class="label-text">ナンバリング</div>
+                    <button @click="sta.numberings.push({text: 'JX 00', color: '#006400'})" :disabled="2 <= sta.numberings.length">ナンバリングを追加</button>
+                    <label v-for="(n, i) in sta.numberings" v-show="numbering">
+                        <div class="label-text">ナンバリング{{i + 1}}</div>
                         <input
                             type="text"
-                            v-model="sta.numbering"
+                            v-model="n.text"
+                            class="narrow-input"
                             pattern="^[A-Za-zＡ-Ｚａ-ｚ]{2}\s*(-\s*)?[0-9０-９]{2}$"
-                            @input="formatUppercase('sta.numbering')">
+                            @input="n.text = formatUppercase($event.target.value)">
                         <div class="invalid-message">アルファベット2文字と数字2桁で入力してください</div>
+                        <input
+                            type="color"
+                            v-model="n.color">
+                        <button @click="sta.numberings.splice(i, 1)" :disabled="sta.numberings.length <= 1">削除</button>                        
                     </label>
+                </section>
+                <section>
+                    <h2>右駅{{branchRight? " 上" : ""}}</h2>
+                    <label>
+                        <div class="label-text">駅名 日本語(漢字)</div>
+                        <input
+                            type="text"
+                            v-model="rightStations[0].name.kanji">
+                    </label>
+                    <label>
+                        <div class="label-text">駅名 英語(アルファベット)</div>
+                        <input
+                            type="text"
+                            v-model="rightStations[0].name.english">
+                        <div class="ex-input grid">
+                            <div v-for="c in macrons" @click="rightStations[0].name.english += c">{{c}}</div>
+                        </div>
+                    </label>
+                    <label>
+                        <div class="label-text">この方面への帯の色</div>
+                        <input
+                            type="color"
+                            v-model="rightStations[0].bandColor">
+                    </label>
+                    <label>
+                        <input
+                            type="checkbox"
+                            v-model="rightStations[0].go">
+                        <span class="toggle"></span>
+                        この方面へ向かう列車がある
+                    </label>
+                    <template v-if="numbering && rightStations[0].go">
+                        <button @click="rightStations[0].numberings.push({text: 'JX 00', color: '#006400'})" :disabled="2 <= rightStations[0].numberings.length">ナンバリングを追加</button>
+                        <div  v-for="(n, i) in rightStations[0].numberings">
+                            <label class="inline">
+                                <div class="label-text">ナンバリング{{i + 1}}</div>
+                                <input
+                                    type="text"
+                                    v-model="n.text"
+                                    class="narrow-input"
+                                    pattern="^[A-Za-zＡ-Ｚａ-ｚ]{2}\s*(-\s*)?[0-9０-９]{2}$"
+                                    @input="n.text = formatUppercase($event.target.value)">
+                                <div class="invalid-message">アルファベット2文字と数字2桁で入力してください</div>
+                            </label>
+                            <label class="inline">
+                                <input
+                                    type="color"
+                                    v-model="n.color">
+                            </label>
+                            <button @click="rightStations[0].numberings.splice(i, 1)">削除</button>
+                        </div>
+                    </template>
+                </section>
+                <section v-if="branchRight">
+                    <h2>右駅 下</h2>
+                    <label>
+                        <div class="label-text">駅名 日本語(漢字)</div>
+                        <input
+                            type="text"
+                            v-model="rightStations[1].name.kanji">
+                    </label>
+                    <label>
+                        <div class="label-text">駅名 英語(アルファベット)</div>
+                        <input
+                            type="text"
+                            v-model="rightStations[1].name.english">
+                        <div class="ex-input grid">
+                            <div v-for="c in macrons" @click="rightStations[1].name.english += c">{{c}}</div>
+                        </div>
+                    </label>
+                    <label>
+                        <div class="label-text">この方面への帯の色</div>
+                        <input
+                            type="color"
+                            v-model="rightStations[1].bandColor">
+                    </label>
+                    <label>
+                        <input
+                            type="checkbox"
+                            v-model="rightStations[1].go">
+                        <span class="toggle"></span>
+                        この方面へ向かう列車がある
+                    </label>
+                    <template v-if="numbering && rightStations[1].go">
+                        <button @click="rightStations[1].numberings.push({text: 'JX 00', color: '#006400'})" :disabled="2 <= rightStations[1].numberings.length">ナンバリングを追加</button>
+                        <div  v-for="(n, i) in rightStations[1].numberings">
+                            <label class="inline">
+                                <div class="label-text">ナンバリング{{i + 1}}</div>
+                                <input
+                                    type="text"
+                                    v-model="n.text"
+                                    class="narrow-input"
+                                    pattern="^[A-Za-zＡ-Ｚａ-ｚ]{2}\s*(-\s*)?[0-9０-９]{2}$"
+                                    @input="n.text = formatUppercase($event.target.value)">
+                                <div class="invalid-message">アルファベット2文字と数字2桁で入力してください</div>
+                            </label>
+                            <label class="inline">
+                                <input
+                                    type="color"
+                                    v-model="n.color">
+                            </label>
+                            <button @click="rightStations[1].numberings.splice(i, 1)">削除</button>
+                        </div>
+                    </template>
+                </section>
+                <section>
+                    <h2>左駅{{branchLeft? " 上" : ""}}</h2>
+                    <label>
+                        <div class="label-text">駅名 日本語(漢字)</div>
+                        <input
+                            type="text"
+                            v-model="leftStations[0].name.kanji">
+                    </label>
+                    <label>
+                        <div class="label-text">駅名 英語(アルファベット)</div>
+                        <input
+                            type="text"
+                            v-model="leftStations[0].name.english">
+                        <div class="ex-input grid">
+                            <div v-for="c in macrons" @click="leftStations[0].name.english += c">{{c}}</div>
+                        </div>
+                    </label>
+                    <label>
+                        <div class="label-text">この方面への帯の色</div>
+                        <input
+                            type="color"
+                            v-model="leftStations[0].bandColor">
+                    </label>
+                    <label>
+                        <input
+                            type="checkbox"
+                            v-model="leftStations[0].go">
+                        <span class="toggle"></span>
+                        この方面へ向かう列車がある
+                    </label>
+                    <template v-if="numbering && leftStations[0].go">
+                        <button @click="leftStations[0].numberings.push({text: 'JX 00', color: '#006400'})" :disabled="2 <= leftStations[0].numberings.length">ナンバリングを追加</button>
+                        <div  v-for="(n, i) in leftStations[0].numberings">
+                            <label class="inline">
+                                <div class="label-text">ナンバリング{{i + 1}}</div>
+                                <input
+                                    type="text"
+                                    v-model="n.text"
+                                    class="narrow-input"
+                                    pattern="^[A-Za-zＡ-Ｚａ-ｚ]{2}\s*(-\s*)?[0-9０-９]{2}$"
+                                    @input="n.text = formatUppercase($event.target.value)">
+                                <div class="invalid-message">アルファベット2文字と数字2桁で入力してください</div>
+                            </label>
+                            <label class="inline">
+                                <input
+                                    type="color"
+                                    v-model="n.color">
+                            </label>
+                            <button @click="leftStations[0].numberings.splice(i, 1)">削除</button>
+                        </div>
+                    </template>
+                </section>
+                <section v-if="branchLeft">
+                    <h2>左駅 下</h2>
+                    <label>
+                        <div class="label-text">駅名 日本語(漢字)</div>
+                        <input
+                            type="text"
+                            v-model="leftStations[1].name.kanji">
+                    </label>
+                    <label>
+                        <div class="label-text">駅名 英語(アルファベット)</div>
+                        <input
+                            type="text"
+                            v-model="leftStations[1].name.english">
+                        <div class="ex-input grid">
+                            <div v-for="c in macrons" @click="leftStations[1].name.english += c">{{c}}</div>
+                        </div>
+                    </label>
+                    <label>
+                        <div class="label-text">この方面への帯の色</div>
+                        <input
+                            type="color"
+                            v-model="leftStations[1].bandColor">
+                    </label>
+                    <label>
+                        <input
+                            type="checkbox"
+                            v-model="leftStations[1].go">
+                        <span class="toggle"></span>
+                        この方面へ向かう列車がある
+                    </label>
+                    <template v-if="numbering && leftStations[1].go">
+                        <button @click="leftStations[1].numberings.push({text: 'JX 00', color: '#006400'})" :disabled="2 <= leftStations[1].numberings.length">ナンバリングを追加</button>
+                        <div  v-for="(n, i) in leftStations[1].numberings">
+                            <label class="inline">
+                                <div class="label-text">ナンバリング{{i + 1}}</div>
+                                <input
+                                    type="text"
+                                    v-model="n.text"
+                                    class="narrow-input"
+                                    pattern="^[A-Za-zＡ-Ｚａ-ｚ]{2}\s*(-\s*)?[0-9０-９]{2}$"
+                                    @input="n.text = formatUppercase($event.target.value)">
+                                <div class="invalid-message">アルファベット2文字と数字2桁で入力してください</div>
+                            </label>
+                            <label class="inline">
+                                <input
+                                    type="color"
+                                    v-model="n.color">
+                            </label>
+                            <button @click="leftStations[1].numberings.splice(i, 1)">削除</button>
+                        </div>
+                    </template>
+                </section>
+                <section>
+                    <h2>特定都区市内表記</h2>
+                    <button @click="cityNotations.push({text: '', fill: true})">追加</button>
+                    <template v-for="(n, i) in cityNotations">
+                        <div>
+                            <label class="inline">
+                                <div class="label-text">文字</div>
+                                <input
+                                    type="text"
+                                    class="narrow-input"
+                                    v-model="n.text"
+                                    pattern="^.$">
+                                <div class="invalid-message">一文字で入力してください</div>
+                            </label>
+                            <label class="inline">
+                                <input
+                                    type="checkbox"
+                                    v-model="n.fill">
+                                <span class="toggle"></span>
+                                塗りつぶす
+                            </label>
+                            <button @click="cityNotations.splice(i, 1)">削除</button>
+                        </div>
+                    </template>
                 </section>
             </section>
         </section>

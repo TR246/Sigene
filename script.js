@@ -132,46 +132,12 @@
                 const tImgData2 = tImg2.data;
 
                 for(let i = 0, len = width * height; i < len; i++){
-                    tImgData2[i * 4 + 3] = (tImgData1[i * 4] - 63) * 0.3;
+                    tImgData2[i * 4 + 3] = (tImgData1[i * 4] - 63) * 0.2;
                 }
-
-                console.log(tImg2);
 
                 tCtx2.putImageData(tImg2, 0, 0);
 
                 ctx.drawImage(tmp2, 70, 90);
-
-                /*const tmp = document.createElement("canvas");
-                tmp.width = width;
-                tmp.height = height;
-                const tCtx = tmp.getContext("2d");
-                tCtx.fillStyle = "#FFF";
-                tCtx.fillRect(0, 0, width, width);
-                //光1
-                tCtx.shadowColor = "#000"; //"#F8FAFF"
-                tCtx.shadowBlur = 40 * scale;
-                tCtx.shadowOffsetY = height * scale;
-                tCtx.fillStyle = "rgba(0, 0, 0, 0.5)";
-                tCtx.fillRect(30, 30 - height, width - 60, height - 60);
-                //光2
-                tCtx.shadowBlur = 100 * scale;
-                tCtx.beginPath();
-                tCtx.moveTo(100, 100 - fh);
-                tCtx.lineTo(width - 100, 100 - fh);
-                tCtx.lineTo(width - 200, -200);
-                tCtx.lineTo(200, -200);
-                tCtx.closePath();
-                tCtx.fill();
-                document.body.appendChild(tmp);
-                const tmpImg = tCtx.getImageData(0, 0, width, height);
-                const returnImg = tCtx.createImageData(width, height);
-                const tmpImgData = tmpImg.data;
-                const returnImgData = returnImg.data;
-                for(let i = 0, len = fw * fh; i < len; i++){
-                    returnImgData[i * 4 + 3] = tmpImgData[i * 4];
-                }
-                tCtx.putImageData(returnImg, 0, 0);
-                ctx.drawImage(tmp, 70, 90);*/
             }
         },
         nonLight: {
@@ -190,20 +156,35 @@
         "jre-kanji"(colorCtx, maskCtx, data){
             const {width, height} = data.size;
             const hw = width / 2;
+            const hw_floor = Math.floor(hw);
+            const hw_ceil = Math.ceil(hw);
 
             //緑線
             const lineY = height * 0.68; //線の中心Y位置
             const lineHeight = 120; //線の太さ
+            const lineHeight_ceil = Math.ceil(lineHeight);
             const lineTop = lineY - lineHeight / 2; //線の上部Y位置
+            const lineTop_floor = Math.floor(lineTop);
             const lineBottom = lineY + lineHeight / 2; //線の下部Y位置
             //右
             if(data.branchRight){
                 //分岐する場合
             }else{
                 //分岐しない場合
-                maskCtx.fillRect(hw, lineTop, hw, lineHeight);
-                colorCtx.fillStyle = "rgba(0, 128, 0, 0.5)";
-                colorCtx.fillRect(hw, Math.floor(lineTop), hw, Math.ceil(lineBottom - lineTop));
+                /*maskCtx.beginPath();
+                maskCtx.moveTo(hw_floor, lineTop);*/
+                maskCtx.fillRect(hw_floor, lineTop, hw_ceil, lineHeight);
+                colorCtx.fillStyle = "#006400";
+                colorCtx.fillRect(hw, lineTop_floor, hw_ceil, lineHeight_ceil);
+            }
+            //左
+            if(data.branchLeft){
+                //分岐する場合
+            }else{
+                //分岐しない場合
+                maskCtx.fillRect(0, lineTop, hw_ceil, lineHeight);
+                colorCtx.fillStyle = "#006400";
+                colorCtx.fillRect(0, lineTop_floor, hw_ceil, lineHeight_ceil);
             }
         }
     };
@@ -213,24 +194,28 @@
     const ctx1 = canvas1.getContext("2d");
 
     const update = function(){
-        const {size: {width, height}, signBoard} = this;
+        setTimeout(() => {
+            const {size: {width, height}, signBoard} = this;
 
-        const frame = frames[signBoard.type];
-        const fp = frame.padding;
+            const frame = frames[signBoard.type];
+            const fp = frame.padding;
 
-        const fw = width + fp.left + fp.right;
-        const fh = height + fp.top + fp.bottom;
-        
-        const {width: _cw, height: _ch} = contain(document.body.clientWidth, window.innerHeight * 0.5, fw, fh);
-        const cw = Math.floor(_cw) * devicePixelRatio;
-        const ch = Math.floor(_ch) * devicePixelRatio;
+            const fw = width + fp.left + fp.right;
+            const fh = height + fp.top + fp.bottom;
+            
+            const {width: _cw, height: _ch} = contain(document.body.clientWidth, window.innerHeight * 0.5, fw, fh);
+            const cw = Math.floor(_cw) * devicePixelRatio;
+            const ch = Math.floor(_ch) * devicePixelRatio;
 
-        canvas1.width = cw;
-        canvas1.height = ch;
+            canvas1.width = cw;
+            canvas1.height = ch;
+            canvas1.style.width = _cw + "px";
+            canvas1.style.height = _ch + "px";
 
-        const scale = cw / fw;
-        ctx1.scale(scale, scale);
-        draw(ctx1, width, height, scale, this);
+            const scale = cw / fw;
+            ctx1.scale(scale, scale);
+            draw(ctx1, width, height, scale, this);
+        }, 0);
     };
 
     //保存
@@ -317,20 +302,79 @@
                 light: true
             },
             numbering: true,
-            branchRight: false,
+            branchRight: true,
             branchLeft: false,
             sta: {
                 name: {
-                    kanji: "市川",
-                    english: "Ichikawa",
-                    kana: "いちかわ",
-                    chinese: "市川",
-                    korean: "이치카와"
+                    kanji: "大宮",
+                    english: "Ōmiya",
+                    kana: "おおみや",
+                    chinese: "大宫",
+                    korean: "오미야"
                 },
-                numbering: "JB 27",
-                enableTlc: false,
-                tlc: ""
-            }
+                enableTlc: true,
+                tlc: "OMY",
+                numberings: [{
+                    text: "JU 07",
+                    color: "#F68B1E"
+                }, {
+                    text: "JS 24",
+                    color: "#C9242F"
+                }]
+            },
+            rightStations: [
+                {
+                    name: {
+                        kanji: "さいたま新都心",
+                        english: "Saitama-Shintoshin"
+                    },
+                    bandColor: "#006400",
+                    go: true,
+                    numberings: [{
+                        text: "JU 06",
+                        color: "#F68B1E"
+                    }]
+                },
+                {
+                    name: {
+                        kanji: "浦和",
+                        english: "Urawa"
+                    },
+                    bandColor: "#006400",
+                    go: true,
+                    numberings: [{
+                        text: "JS 23",
+                        color: "#C9242F"
+                    }]
+                }
+            ],
+            leftStations: [
+                {
+                    name: {
+                        kanji: "土呂",
+                        english: "Toro"
+                    },
+                    bandColor: "#006400",
+                    go: false,
+                    numberings: []
+                },
+                {
+                    name: {
+                        kanji: "",
+                        english: ""
+                    },
+                    bandColor: "#006400",
+                    go: false,
+                    numberings: []
+                }
+            ],
+            cityNotations: [{
+                text: "山",
+                fill: false
+            }, {
+                text: "区",
+                fill: true
+            }]
         },
         computed: {
             enableBoardLight(){
@@ -342,17 +386,19 @@
                 if(!this.enableBoardLight)
                     this.signBoard.light = false;
             },
-            formatUppercase(key){
-                replaceProperty(
-                    this, key,
-                    v => v.replace(/[Ａ-Ｚａ-ｚ０-９]/g,
-                        c => String.fromCharCode(c.charCodeAt(0) - 65248))
-                        .toUpperCase());
+            formatUppercase(v){
+                return v.replace(/[Ａ-Ｚａ-ｚ０-９]/g,
+                    c => String.fromCharCode(c.charCodeAt(0) - 65248))
+                    .toUpperCase();
             },
             save(){},
             saveAsPNG, update
         }
     });
 
-    window.addEventListener("resize", () => update.call(vm));
+    let eventTimer = 0;
+    window.addEventListener("resize", () => {
+        clearTimeout(eventTimer);
+        eventTimer = setTimeout(() => update.call(vm), 300);
+    });
 })();

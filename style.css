@@ -96,9 +96,13 @@ header ul li a:hover {
     margin: 0 auto;
 }
 .row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: stretch;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+@media screen and (max-width: 720px){
+    .row {
+        display: block;
+    }
 }
 .row section {
     margin: 20px;
@@ -108,6 +112,7 @@ header ul li a:hover {
 }
 
 button {
+    margin: 5px;
     font-size: 14px;
     border: 2px solid #212121;
     outline: 0;
@@ -121,15 +126,18 @@ button {
         0 0 #212121 inset;
     transition: 225ms;
 }
-button:hover {
+button:not(:disabled):hover {
     box-shadow:
         0 5px #212121 inset,
         0 -5px #212121 inset;
 }
+button:disabled {
+    opacity: .7;
+    cursor: default;
+}
 label {
     margin: 10px 0;
     display: block;
-    width: 100%;
     cursor: pointer;
 }
 .label-text {
@@ -142,6 +150,7 @@ select {
     display: inline-block;
     margin-right: 2px;
     border: 1px solid #9E9E9E;
+    background-color: #FFF;
     outline: 0;
     padding: 5px;
     border-radius: 2px;
@@ -159,7 +168,7 @@ input[type="number"]:invalid {
 input[type="text"] {
     width: 200px;
 }
-input[type="number"] {
+input[type="number"], input.narrow-input {
     width: 100px;
 }
 input[type="checkbox"],
@@ -304,4 +313,8 @@ input[type="radio"] {
 :checked + .toggle::before {
     transform: translateX(20px);
     box-shadow: inset 0 0 0 0 #212121;
+}
+
+.inline {
+    display: inline-block;
 }
