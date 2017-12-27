@@ -166,26 +166,106 @@
             const lineTop = lineY - lineHeight / 2; //線の上部Y位置
             const lineTop_floor = Math.floor(lineTop);
             const lineBottom = lineY + lineHeight / 2; //線の下部Y位置
-            //右
+            const branchStart = Math.min(780, hw - lineHeight);
+
+            maskCtx.beginPath();
             if(data.branchRight){
-                //分岐する場合
+                //右 分岐する
+                maskCtx.moveTo(width - branchStart, lineTop);
+                maskCtx.lineTo(width - branchStart + 80, lineTop - 80);
+
+                if(data.rightStations[0].go){
+                    //右上 尖らせる
+                    maskCtx.lineTo(width - 160, lineTop - 80);
+                    maskCtx.lineTo(width - 64, lineTop - 32);
+                    maskCtx.lineTo(width - 160, lineTop + 16);
+                }else{
+                    //右上 尖らせない
+                    maskCtx.lineTo(width, lineTop - 80);
+                    maskCtx.lineTo(width, lineTop + 16);
+                }
+
+                maskCtx.lineTo(width - branchStart + 120, lineTop + 16);
+                maskCtx.lineTo(width - branchStart + 76, lineY);
+                maskCtx.lineTo(width - branchStart + 120, lineBottom - 16);
+
+                if(data.rightStations[1].go){
+                    //右下 尖らせる
+                    maskCtx.lineTo(width - 160, lineBottom - 16);
+                    maskCtx.lineTo(width - 64, lineBottom + 32);
+                    maskCtx.lineTo(width - 160, lineBottom + 80);
+                }else{
+                    //右下 尖らせない
+                    maskCtx.lineTo(width, lineBottom - 16);
+                    maskCtx.lineTo(width, lineBottom + 80);
+                }
+
+                maskCtx.lineTo(width - branchStart + 80, lineBottom + 80);
+                maskCtx.lineTo(width - branchStart, lineBottom);
+
+            }else if(data.rightStations[0].go){
+                //右 分岐しない 尖らせる
+                maskCtx.moveTo(width - 200, lineTop);
+                maskCtx.lineTo(width - 80, lineY);
+                maskCtx.lineTo(width - 200, lineBottom);
             }else{
-                //分岐しない場合
-                /*maskCtx.beginPath();
-                maskCtx.moveTo(hw_floor, lineTop);*/
-                maskCtx.fillRect(hw_floor, lineTop, hw_ceil, lineHeight);
-                colorCtx.fillStyle = "#006400";
-                colorCtx.fillRect(hw, lineTop_floor, hw_ceil, lineHeight_ceil);
+                //右 分岐しない 尖らせない
+                maskCtx.moveTo(width, lineTop);
+                maskCtx.lineTo(width, lineBottom);
             }
-            //左
+            
             if(data.branchLeft){
-                //分岐する場合
+                //左 分岐する
+                maskCtx.lineTo(branchStart, lineBottom);
+                maskCtx.lineTo(branchStart - 80, lineBottom + 80);
+
+                if(data.leftStations[1].go){
+                    //左下 尖らせる
+                    maskCtx.lineTo(160, lineBottom + 80);
+                    maskCtx.lineTo(64, lineBottom + 32);
+                    maskCtx.lineTo(160, lineBottom - 16);
+                }else{
+                    //左下 尖らせない
+                    maskCtx.lineTo(0, lineBottom + 80);
+                    maskCtx.lineTo(0, lineBottom - 16);
+                }
+
+                maskCtx.lineTo(branchStart - 120, lineBottom - 16);
+                maskCtx.lineTo(branchStart - 76, lineY);
+                maskCtx.lineTo(branchStart - 120, lineTop + 16);
+
+                if(data.leftStations[0].go){
+                    //左上 尖らせる
+                    maskCtx.lineTo(160, lineTop + 16);
+                    maskCtx.lineTo(64, lineTop - 32);
+                    maskCtx.lineTo(160, lineTop - 80);
+                }else{
+                    //左上 尖らせない
+                    maskCtx.lineTo(0, lineTop + 16);
+                    maskCtx.lineTo(0, lineTop - 80);
+                }
+
+                maskCtx.lineTo(branchStart - 80, lineTop - 80);
+                maskCtx.lineTo(branchStart, lineTop);
+                
+            }else if(data.leftStations[0].go){
+                //左 分岐しない 尖らせる
+                maskCtx.lineTo(200, lineBottom);
+                maskCtx.lineTo(80, lineY);
+                maskCtx.lineTo(200, lineTop);
             }else{
-                //分岐しない場合
-                maskCtx.fillRect(0, lineTop, hw_ceil, lineHeight);
-                colorCtx.fillStyle = "#006400";
-                colorCtx.fillRect(0, lineTop_floor, hw_ceil, lineHeight_ceil);
+                //左 分岐しない 尖らせない
+                maskCtx.lineTo(0, lineBottom);
+                maskCtx.lineTo(0, lineTop);
             }
+
+            maskCtx.closePath();
+            maskCtx.lineWidth = 10;
+            maskCtx.fill();
+
+            //色塗り
+            colorCtx.fillStyle = "#006400";
+            colorCtx.fillRect(0, 0, width, height);
         }
     };
 
@@ -328,7 +408,7 @@
                         kanji: "さいたま新都心",
                         english: "Saitama-Shintoshin"
                     },
-                    bandColor: "#006400",
+                    lineColor: "#006400",
                     go: true,
                     numberings: [{
                         text: "JU 06",
@@ -340,7 +420,7 @@
                         kanji: "浦和",
                         english: "Urawa"
                     },
-                    bandColor: "#006400",
+                    lineColor: "#006400",
                     go: true,
                     numberings: [{
                         text: "JS 23",
@@ -354,7 +434,7 @@
                         kanji: "土呂",
                         english: "Toro"
                     },
-                    bandColor: "#006400",
+                    lineColor: "#006400",
                     go: false,
                     numberings: []
                 },
@@ -363,7 +443,7 @@
                         kanji: "",
                         english: ""
                     },
-                    bandColor: "#006400",
+                    lineColor: "#006400",
                     go: false,
                     numberings: []
                 }
