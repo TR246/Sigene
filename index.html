@@ -22,11 +22,16 @@
         <section id="canvasArea">
             <canvas id="canvas1" width="2250" height="600"></canvas>
         </section>
-        <section id="vm" class="form" v-cloak @change="update">
+        <section id="vm" class="form" v-cloak @change="update" @click="update">
             <section class="row">
                 <section>
                     <button @click="save">入力内容を保存</button>
                     <button @click="saveAsPNG">画像として保存</button>
+                </section>
+                <section>
+                    <button @click="loadFont('japanese')" :disabled="fontLoad.japanese">日本語フォントをロードする(約700KB ～ 約1.6MB)</button>
+                    <button @click="loadFont('chinese')" :disabled="fontLoad.chinese">中国語フォントをロードする(約1.5MB ～ 約2.2MB)</button>
+                    <button @click="loadFont('korean')" :disabled="fontLoad.korean">韓国語フォントをロードする(約1MB ～ 約2.1MB)</button>
                 </section>
             </section>
             <section class="row">
@@ -418,6 +423,7 @@
         </section>
 
         <script src="https://unpkg.com/vue" defer></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" defer></script>
         <script src="script.js" defer></script>
     </body>
 </html>

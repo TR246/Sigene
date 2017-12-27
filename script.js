@@ -160,7 +160,7 @@
             const hw_ceil = Math.ceil(hw);
 
             //緑線
-            const lineY = height * 0.68; //線の中心Y位置
+            const lineY = height / 2 + 100; //線の中心Y位置
             const lineHeight = 120; //線の太さ
             const lineHeight_ceil = Math.ceil(lineHeight);
             const lineTop = lineY - lineHeight / 2; //線の上部Y位置
@@ -264,8 +264,97 @@
             maskCtx.fill();
 
             //色塗り
-            colorCtx.fillStyle = "#006400";
-            colorCtx.fillRect(0, 0, width, height);
+            if(data.branchRight){
+                //右 分岐する
+                colorCtx.fillStyle = data.rightStations[0].lineColor;
+                colorCtx.fillRect(hw_floor, lineTop_floor - 80, hw_ceil, 80 + lineHeight_ceil / 2);
+                colorCtx.fillStyle = data.rightStations[1].lineColor;
+                colorCtx.fillRect(hw_floor, lineY, hw_ceil, 80 + lineHeight_ceil / 2);
+            }else{
+                //右 分岐しない
+                colorCtx.fillStyle = data.rightStations[0].lineColor;
+                colorCtx.fillRect(hw_floor, lineTop_floor, hw_ceil, lineHeight_ceil);
+            }
+            if(data.branchLeft){
+                //左 分岐する
+                colorCtx.fillStyle = data.leftStations[0].lineColor;
+                colorCtx.fillRect(0, lineTop_floor - 80, hw, 80 + lineHeight_ceil / 2);
+                colorCtx.fillStyle = data.leftStations[1].lineColor;
+                colorCtx.fillRect(0, lineY, hw, 80 + lineHeight_ceil / 2);
+            }else{
+                //左 分岐しない
+                colorCtx.fillStyle = data.leftStations[0].lineColor;
+                colorCtx.fillRect(0, lineTop_floor, hw, lineHeight_ceil);
+            }
+            //ラインカラー塗り
+            const len = data.routeColors.length;
+            const h = lineHeight / len;
+            const x = hw - lineHeight / 2;
+            for(let i = 0; i < len; i++){
+                colorCtx.fillStyle = data.routeColors[i];
+                colorCtx.fillRect(x, i? lineTop + h * i : lineTop_floor, lineHeight, Math.ceil(h));
+            }
+
+            //駅名
+            const drawText = options => {
+                const {x, y, text, weight, size, font, maxWidth, align} = options;
+                maskCtx.textAlign = align || "center";
+                maskCtx.font = `${weight || ""} ${size}px ${font}`;
+                maskCtx.fillText(text, x, y, maxWidth);
+                colorCtx.fillStyle = "#1A1A1A";
+                const textWidth = Math.min(maxWidth || Infinity, maskCtx.measureText(text).width);
+                colorCtx.fillRect((align === "left"? x : x - textWidth / 2) - 10, y - size - 10, textWidth + 20, size + 20);
+                return textWidth;
+            };
+
+            //漢字
+            const kanjiWidth = drawText({
+                x: hw,
+                y: lineTop - 140,
+                text: data.sta.name.kanji.split("").join(["　", " "][data.sta.name.kanji.length - 2] || ""),
+                weight: "700",
+                size: 170,
+                font: "'Mplus 1p', sans-serif"
+            });
+            //ひらがな
+            drawText({
+                x: hw,
+                y: lineTop - 30,
+                text: data.sta.name.kana,
+                weight: "bold",
+                size: 60,
+                font: "'Mplus 1p', sans-serif"
+            });
+            //英語
+            drawText({
+                x: hw,
+                y: lineBottom + 100,
+                text: data.sta.name.english,
+                weight: "bold",
+                size: 80,
+                font: "'Helvetica', 'Arial', sans-serif"
+            });
+            if(data.numbering){
+                //4ヶ国語表記
+                drawText({
+                    x: hw + kanjiWidth / 2 + 80,
+                    y: lineTop - 220,
+                    text: data.sta.name.chinese,
+                    size: 50,
+                    font: "'Noto Sans SC', sans-serif",
+                    align: "left"
+                });
+                drawText({
+                    x: hw + kanjiWidth / 2 + 80,
+                    y: lineTop - 150,
+                    text: data.sta.name.korean,
+                    size: 50,
+                    font: "'Noto Sans KR', sans-serif",
+                    align: "left"
+                });
+
+                //ナンバリング
+            }
         }
     };
 
@@ -369,9 +458,20 @@
     };
     const vm = new Vue({
         el: "#vm",
-        mounted: update,
+        //mounted: update,
+        mounted(){
+            this.update();
+            this.loadFont('japanese');
+            this.loadFont('chinese');
+            this.loadFont('korean');
+        },
         data: {
             macrons: ["Ā", "Ē", "Ī", "Ō", "Ū", "ā", "ē", "ī", "ō", "ū"],
+            fontLoad: {
+                japanese: false,
+                chinese: false,
+                korean: false
+            },
             size: {
                 width: 2250,
                 height: 600
@@ -463,6 +563,35 @@
             }
         },
         methods: {
+            loadFont(lang){
+                const self = this;
+                const config = {
+                    japanese: {
+                        families: ["Mplus 1p:n7"],
+                        urls: ["https://fonts.googleapis.com/earlyaccess/mplus1p.css"]
+                    },
+                    chinese: {
+                        families: ["Noto Sans SC:n4"],
+                        urls: ["https://fonts.googleapis.com/earlyaccess/notosanssc.css"]
+                    },
+                    korean: {
+                        families: ["Noto Sans KR:n4"],
+                        urls: ["https://fonts.googleapis.com/earlyaccess/notosanskr.css"]
+                    }
+                };
+                WebFont.load({
+                    custom: config[lang],
+                    loading(){
+                        self.fontLoad[lang] = true;
+                    },
+                    active(){
+                        self.update();
+                    },
+                    inactive(){
+                        self.fontLoad[lang] = false;
+                    }
+                });
+            },
             changeBoardType(){
                 if(!this.enableBoardLight)
                     this.signBoard.light = false;
