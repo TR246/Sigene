@@ -172,6 +172,7 @@
                         <div class="invalid-message">アルファベット2文字と数字2桁で入力してください</div>
                         <input
                             type="color"
+                            list="numberingColors"
                             v-model="n.color">
                         <button @click="sta.numberings.splice(i, 1)" :disabled="sta.numberings.length <= 1">削除</button>                        
                     </label>
@@ -222,6 +223,7 @@
                             <label class="inline">
                                 <input
                                     type="color"
+                                    list="numberingColors"
                                     v-model="n.color">
                             </label>
                             <button @click="rightStations[0].numberings.splice(i, 1)">削除</button>
@@ -274,6 +276,7 @@
                             <label class="inline">
                                 <input
                                     type="color"
+                                    list="numberingColors"
                                     v-model="n.color">
                             </label>
                             <button @click="rightStations[1].numberings.splice(i, 1)">削除</button>
@@ -326,6 +329,7 @@
                             <label class="inline">
                                 <input
                                     type="color"
+                                    list="numberingColors"
                                     v-model="n.color">
                             </label>
                             <button @click="leftStations[0].numberings.splice(i, 1)">削除</button>
@@ -378,6 +382,7 @@
                             <label class="inline">
                                 <input
                                     type="color"
+                                    list="numberingColors"
                                     v-model="n.color">
                             </label>
                             <button @click="leftStations[1].numberings.splice(i, 1)">削除</button>
@@ -416,7 +421,7 @@
                         <div>
                             <label class="inline">
                                 <div class="label-text">色</div>
-                                <input type="color" v-model="routeColors[i]">
+                                <input type="color" v-model="routeColors[i]" list="routeColors">
                             </label>
                             <button @click="routeColors.splice(i, 1)">削除</button>
                         </div>
@@ -424,6 +429,77 @@
                 </section>
             </section>
         </section>
+
+        <datalist id="numberingColors">
+            <option value="#A6A6A6"></option>
+            <option value="#FF8A21"></option>
+            <option value="#FDD700"></option>
+            <option value="#72C11D"></option>
+            <option value="#00B983"></option>
+            <option value="#00C3A5"></option>
+            <option value="#00ADCD"></option>
+            <option value="#006FC5"></option>
+            <option value="#B91E36"></option>
+            <option value="#E21F25"></option>
+        </datalist>
+        <datalist id="routeColors">
+            <option value="#808080"></option>
+            <option value="#888888"></option>
+            <option value="#E93920"></option>
+            <option value="#DB4028"></option>
+            <option value="#F15A22"></option>
+            <option value="#D56A29"></option>
+            <option value="#EE7B28"></option>
+            <option value="#C56E2E"></option>
+            <option value="#F18E44"></option>
+            <option value="#CB7B35"></option>
+            <option value="#F68B1E"></option>
+            <option value="#CD7A1E"></option>
+            <option value="#A8A39D"></option>
+            <option value="#F1AA28"></option>
+            <option value="#F1AA28"></option>
+            <option value="#FFC20D"></option>
+            <option value="#FFD400"></option>
+            <option value="#9ACD32"></option>
+            <option value="#80C241"></option>
+            <option value="#7BC24B"></option>
+            <option value="#72BC4A"></option>
+            <option value="#36823E"></option>
+            <option value="#41934C"></option>
+            <option value="#40934D"></option>
+            <option value="#368C44"></option>
+            <option value="#6FBF7F"></option>
+            <option value="#3CB371"></option>
+            <option value="#339966"></option>
+            <option value="#00B261"></option>
+            <option value="#00B48D"></option>
+            <option value="#00B5AD"></option>
+            <option value="#009793"></option>
+            <option value="#16C0E9"></option>
+            <option value="#00B3E6"></option>
+            <option value="#00B3E6"></option>
+            <option value="#00B2E5"></option>
+            <option value="#00B9F1"></option>
+            <option value="#00AAEE"></option>
+            <option value="#0C7AAD"></option>
+            <option value="#0F5474"></option>
+            <option value="#008DD1"></option>
+            <option value="#007AC0"></option>
+            <option value="#0073BF"></option>
+            <option value="#3B459B"></option>
+            <option value="#3333FF"></option>
+            <option value="#9370DB"></option>
+            <option value="#9E7EB9"></option>
+            <option value="#9D72B0"></option>
+            <option value="#922790"></option>
+            <option value="#851A72"></option>
+            <option value="#C71585"></option>
+            <option value="#F387B7"></option>
+            <option value="#ED77A4"></option>
+            <option value="#880022"></option>
+            <option value="#AA1E30"></option>
+            <option value="#C9242F"></option>
+        </datalist>
 
         <script src="https://unpkg.com/vue" defer></script>
         <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" defer></script>
