@@ -401,6 +401,19 @@
                         </div>
                     </template>
                 </section>
+                <section>
+                    <h2>ラインカラー</h2>
+                    <button @click="routeColors.push('#000000')">追加</button>
+                    <template v-for="(n, i) in routeColors">
+                        <div>
+                            <label class="inline">
+                                <div class="label-text">色</div>
+                                <input type="color" v-model="routeColors[i]">
+                            </label>
+                            <button @click="routeColors.splice(i, 1)">削除</button>
+                        </div>
+                    </template>
+                </section>
             </section>
         </section>
 

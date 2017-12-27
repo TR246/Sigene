@@ -454,7 +454,8 @@
             }, {
                 text: "区",
                 fill: true
-            }]
+            }],
+            routeColors: ["#F68B1E", "#007AC0"]
         },
         computed: {
             enableBoardLight(){
