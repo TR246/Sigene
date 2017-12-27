@@ -1,4 +1,6 @@
 (() => {
+    const TEXT_BLACK = "#1A1A1A";
+
     //Canvas
     const contain = (width1, height1, width2, height2) => {
         //r1, r2は数値が大きいほど横長
@@ -7,6 +9,17 @@
         return r1 > r2?
             {width: r2 * height1, height: height1} : //親のほうが横長 高さをあわせる
             {width: width1, height: width1 / r2}; //子のほうが横長 幅をあわせる
+    };
+
+    //角丸四角系
+    const roundRect = (ctx, x, y, width, height, r) => {
+        ctx.beginPath();
+        ctx.moveTo(x, y + r);
+        ctx.arcTo(x, y, x + width - r, y, r);
+        ctx.arcTo(x + width, y, x + width, y + height - r, r);
+        ctx.arcTo(x + width, y + height, x + r, y + height, r);
+        ctx.arcTo(x, y + height, x, y + r, r);
+        ctx.closePath();
     };
 
     const frames = {
@@ -49,7 +62,7 @@
                 ctx.lineTo(fw - 6, 6);
                 ctx.lineTo(fw - 6, fh);
                 ctx.lineWidth = 2;
-                ctx.strokeStyle = "#1A1A1A";
+                ctx.strokeStyle = TEXT_BLACK;
                 ctx.stroke();
 
                 //上部
@@ -301,9 +314,9 @@
                 maskCtx.textAlign = align || "center";
                 maskCtx.font = `${weight || ""} ${size}px ${font}`;
                 maskCtx.fillText(text, x, y, maxWidth);
-                colorCtx.fillStyle = "#1A1A1A";
+                colorCtx.fillStyle = TEXT_BLACK;
                 const textWidth = Math.min(maxWidth || Infinity, maskCtx.measureText(text).width);
-                colorCtx.fillRect((align === "left"? x : x - textWidth / 2) - 10, y - size - 10, textWidth + 20, size + 20);
+                colorCtx.fillRect((align === "left"? x : x - textWidth / 2) - 10, y - size - 10, textWidth + 20, size + 40);
                 return textWidth;
             };
 
@@ -312,7 +325,7 @@
                 x: hw,
                 y: lineTop - 140,
                 text: data.sta.name.kanji.split("").join(["　", " "][data.sta.name.kanji.length - 2] || ""),
-                weight: "700",
+                weight: "800",
                 size: 170,
                 font: "'Mplus 1p', sans-serif"
             });
@@ -321,7 +334,7 @@
                 x: hw,
                 y: lineTop - 30,
                 text: data.sta.name.kana,
-                weight: "bold",
+                weight: "800",
                 size: 60,
                 font: "'Mplus 1p', sans-serif"
             });
@@ -354,6 +367,60 @@
                 });
 
                 //ナンバリング
+                const drawNumbering = (x, y, size, text, color, tlc) => {
+                    const r = size * 0.1;
+                    const innerSize = size - 2 * r;
+                    const route = text.match(/[A-Z]{2}/g)[0];
+                    const number = text.match(/[0-9]{2}/g)[0];
+                    if(tlc){
+                        //角丸正方形
+                        roundRect(colorCtx, x, y, size, size, r);
+                        colorCtx.fillStyle = color;
+                        colorCtx.fill();
+                    }else{
+                        //色塗り
+                        colorCtx.fillStyle = color;
+                        colorCtx.fillRect(Math.floor(x), Math.floor(y), Math.ceil(size), Math.ceil(size));
+                        //角丸正方形
+                        roundRect(maskCtx, x, y, size, size, r);
+                        maskCtx.fill();
+                    }
+                    //内側抜き
+                    maskCtx.fillStyle = "#000";
+                    maskCtx.fillRect(x + r, y + r, innerSize, innerSize);
+                    maskCtx.fillStyle = "#FFF";
+                    //テキスト
+                    colorCtx.fillStyle = TEXT_BLACK;
+                    colorCtx.fillRect(Math.ceil(x + r), Math.ceil(y + r), Math.floor(innerSize), Math.floor(innerSize));
+                    maskCtx.textAlign = "center";
+                    maskCtx.font = `bold ${r * 3}px 'Lato', 'Cabin', sans-serif`;
+                    maskCtx.fillText(route, x + size / 2, y + 4 * r);
+                    maskCtx.font = `bold ${r * 4.4}px 'Open Sans', sans-serif`;
+                    maskCtx.fillText(number, x + size / 2, y + 8 * r);
+                };
+
+                const len = data.sta.numberings.length;
+                const tlc = data.sta.enableTlc;
+                if(tlc){
+                    //スリーレターコード枠
+                    const x = hw - kanjiWidth / 2 - 80 - 183.6*len;
+                    const y = lineTop - 290;
+                    const width = 183.6*len + 13.6;
+                    const height = 241.4;
+                    colorCtx.fillStyle = TEXT_BLACK;
+                    colorCtx.fillRect(Math.floor(x), Math.floor(y), Math.ceil(width), Math.ceil(height));
+                    roundRect(maskCtx, x, y, width, height, 30.6);
+                    maskCtx.fill();
+                    maskCtx.textAlign = "center";
+                    maskCtx.font = "bold 55px 'Lato', 'Cabin', sans-serif";
+                    maskCtx.fillStyle = "#000";
+                    maskCtx.fillText(data.sta.tlc, x + width / 2, y + 51);
+                    maskCtx.fillStyle = "#FFF";
+                }
+                for(let i = 0; i < len; i++){
+                    const n = data.sta.numberings[len - i - 1];
+                    drawNumbering(hw - kanjiWidth / 2 - 80 - 170 - 183.6*i, lineTop - (tlc? 290 - 57.8 : 290), 170, n.text, n.color, true);
+                }
             }
         }
     };
@@ -567,7 +634,7 @@
                 const self = this;
                 const config = {
                     japanese: {
-                        families: ["Mplus 1p:n7"],
+                        families: ["Mplus 1p:n8"],
                         urls: ["https://fonts.googleapis.com/earlyaccess/mplus1p.css"]
                     },
                     chinese: {
@@ -606,6 +673,17 @@
         }
     });
 
+    //ウェブフォント
+    WebFont.load({
+        google: {
+            families: ["Open+Sans:700&text=0123456789MS", "Lato:700&text=ABDEFGHIJLMNOPQRSTUVWXYZ", "Cabin:700&text=CK"]
+        },
+        active(){
+            update.call(vm);
+        }
+    });
+
+    //リサイズ
     let eventTimer = 0;
     window.addEventListener("resize", () => {
         clearTimeout(eventTimer);
