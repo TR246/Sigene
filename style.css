@@ -81,12 +81,33 @@ header ul li a:hover {
 
 #canvasArea {
     max-height: 50vh;
-    background-color: #424242;
+    background-color: #616161;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    position: relative;
     box-shadow: 0 0 5px #212121;
+    overflow: hidden;
+}
+#message {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .7);
+    color: #FFF;
+    text-shadow: 0 0 5px #000;
+    font-size: 1.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: 225ms;
+}
+#message.show {
+    opacity: 1;
 }
 [v-cloak] {
     display: none;
@@ -94,6 +115,7 @@ header ul li a:hover {
 .form {
     max-width: 1000px;
     margin: 0 auto;
+    padding: 10px;
 }
 .row {
     display: grid;
@@ -105,7 +127,7 @@ header ul li a:hover {
     }
 }
 .row section {
-    margin: 20px;
+    margin: 10px;
     padding: 10px;
     border-top: 1px solid #9E9E9E;
     border-bottom: 1px solid #9E9E9E;
@@ -131,9 +153,18 @@ button:not(:disabled):hover {
         0 5px #212121 inset,
         0 -5px #212121 inset;
 }
+button:active {
+    background-color: rgba(33, 33, 33, .5);
+}
 button:disabled {
     opacity: .7;
     cursor: default;
+}
+.large-button {
+    display: block;
+    margin: 0;
+    width: 100%;
+    height: 5em;
 }
 label {
     margin: 10px 0;

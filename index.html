@@ -24,17 +24,19 @@
         </header>
         <section id="canvasArea">
             <canvas id="canvas1" width="2250" height="600"></canvas>
+            <div id="message">正しい形式で入力してください</div>
         </section>
-        <section id="vm" class="form" v-cloak @change="update" @click="update">
+        <form id="vm" class="form" v-cloak @change="update">
+            <button @click.prevent="update" class="large-button">入力内容を反映</button>
             <section class="row">
                 <section>
-                    <button @click="save">入力内容を保存</button>
-                    <button @click="saveAsPNG">画像として保存</button>
+                    <button @click.prevent="reset() + update()">入力内容をリセット</button>
+                    <button @click.prevent="saveAsPNG() + update()">画像として保存</button>
                 </section>
                 <section>
-                    <button @click="loadFont('japanese')" :disabled="fontLoad.japanese">日本語フォントをロードする(約700KB ～ 約1.6MB)</button>
-                    <button @click="loadFont('chinese')" :disabled="fontLoad.chinese">中国語フォントをロードする(約1.5MB ～ 約2.2MB)</button>
-                    <button @click="loadFont('korean')" :disabled="fontLoad.korean">韓国語フォントをロードする(約1MB ～ 約2.1MB)</button>
+                    <button @click.prevent="loadFont('japanese')" :disabled="fontLoad.japanese">日本語フォントをロードする(約700KB ～ 約1.6MB)</button>
+                    <button @click.prevent="loadFont('chinese')" :disabled="fontLoad.chinese">中国語フォントをロードする(約1.5MB ～ 約2.2MB)</button>
+                    <button @click.prevent="loadFont('korean')" :disabled="fontLoad.korean">韓国語フォントをロードする(約1MB ～ 約2.1MB)</button>
                 </section>
             </section>
             <section class="row">
@@ -160,7 +162,7 @@
                             @input="sta.tlc = formatUppercase($event.target.value)">
                         <div class="invalid-message">アルファベット3文字で入力してください</div>
                     </label>
-                    <button @click="sta.numberings.push({text: 'JX 00', color: '#006400'})" :disabled="2 <= sta.numberings.length">ナンバリングを追加</button>
+                    <button @click.prevent="sta.numberings.push({text: 'JX 00', color: '#006400'}) + update()" :disabled="2 <= sta.numberings.length">ナンバリングを追加</button>
                     <label v-for="(n, i) in sta.numberings" v-show="numbering">
                         <div class="label-text">ナンバリング{{i + 1}}</div>
                         <input
@@ -174,7 +176,7 @@
                             type="color"
                             list="numberingColors"
                             v-model="n.color">
-                        <button @click="sta.numberings.splice(i, 1)" :disabled="sta.numberings.length <= 1">削除</button>                        
+                        <button @click.prevent="sta.numberings.splice(i, 1) + update()" :disabled="sta.numberings.length <= 1">削除</button>                        
                     </label>
                 </section>
                 <section>
@@ -208,7 +210,7 @@
                         この方面へ向かう列車がある
                     </label>
                     <template v-if="numbering && rightStations[0].go">
-                        <button @click="rightStations[0].numberings.push({text: 'JX 00', color: '#006400'})" :disabled="2 <= rightStations[0].numberings.length">ナンバリングを追加</button>
+                        <button @click.prevent="rightStations[0].numberings.push({text: 'JX 00', color: '#006400'}) + update()" :disabled="2 <= rightStations[0].numberings.length">ナンバリングを追加</button>
                         <div  v-for="(n, i) in rightStations[0].numberings">
                             <label class="inline">
                                 <div class="label-text">ナンバリング{{i + 1}}</div>
@@ -226,7 +228,7 @@
                                     list="numberingColors"
                                     v-model="n.color">
                             </label>
-                            <button @click="rightStations[0].numberings.splice(i, 1)">削除</button>
+                            <button @click.prevent="rightStations[0].numberings.splice(i, 1) + update()">削除</button>
                         </div>
                     </template>
                 </section>
@@ -261,7 +263,7 @@
                         この方面へ向かう列車がある
                     </label>
                     <template v-if="numbering && rightStations[1].go">
-                        <button @click="rightStations[1].numberings.push({text: 'JX 00', color: '#006400'})" :disabled="2 <= rightStations[1].numberings.length">ナンバリングを追加</button>
+                        <button @click.prevent="rightStations[1].numberings.push({text: 'JX 00', color: '#006400'}) + update()" :disabled="2 <= rightStations[1].numberings.length">ナンバリングを追加</button>
                         <div  v-for="(n, i) in rightStations[1].numberings">
                             <label class="inline">
                                 <div class="label-text">ナンバリング{{i + 1}}</div>
@@ -279,7 +281,7 @@
                                     list="numberingColors"
                                     v-model="n.color">
                             </label>
-                            <button @click="rightStations[1].numberings.splice(i, 1)">削除</button>
+                            <button @click.prevent="rightStations[1].numberings.splice(i, 1) + update()">削除</button>
                         </div>
                     </template>
                 </section>
@@ -314,7 +316,7 @@
                         この方面へ向かう列車がある
                     </label>
                     <template v-if="numbering && leftStations[0].go">
-                        <button @click="leftStations[0].numberings.push({text: 'JX 00', color: '#006400'})" :disabled="2 <= leftStations[0].numberings.length">ナンバリングを追加</button>
+                        <button @click.prevent="leftStations[0].numberings.push({text: 'JX 00', color: '#006400'}) + update()" :disabled="2 <= leftStations[0].numberings.length">ナンバリングを追加</button>
                         <div  v-for="(n, i) in leftStations[0].numberings">
                             <label class="inline">
                                 <div class="label-text">ナンバリング{{i + 1}}</div>
@@ -332,7 +334,7 @@
                                     list="numberingColors"
                                     v-model="n.color">
                             </label>
-                            <button @click="leftStations[0].numberings.splice(i, 1)">削除</button>
+                            <button @click.prevent="leftStations[0].numberings.splice(i, 1) + update()">削除</button>
                         </div>
                     </template>
                 </section>
@@ -367,7 +369,7 @@
                         この方面へ向かう列車がある
                     </label>
                     <template v-if="numbering && leftStations[1].go">
-                        <button @click="leftStations[1].numberings.push({text: 'JX 00', color: '#006400'})" :disabled="2 <= leftStations[1].numberings.length">ナンバリングを追加</button>
+                        <button @click.prevent="leftStations[1].numberings.push({text: 'JX 00', color: '#006400'}) + update()" :disabled="2 <= leftStations[1].numberings.length">ナンバリングを追加</button>
                         <div  v-for="(n, i) in leftStations[1].numberings">
                             <label class="inline">
                                 <div class="label-text">ナンバリング{{i + 1}}</div>
@@ -385,13 +387,13 @@
                                     list="numberingColors"
                                     v-model="n.color">
                             </label>
-                            <button @click="leftStations[1].numberings.splice(i, 1)">削除</button>
+                            <button @click.prevent="leftStations[1].numberings.splice(i, 1) + update()">削除</button>
                         </div>
                     </template>
                 </section>
                 <section>
                     <h2>特定都区市内表記</h2>
-                    <button @click="cityNotations.push({text: '', fill: true})">追加</button>
+                    <button @click.prevent="cityNotations.push({text: '', fill: true}) + update()">追加</button>
                     <template v-for="(n, i) in cityNotations">
                         <div>
                             <label class="inline">
@@ -410,25 +412,25 @@
                                 <span class="toggle"></span>
                                 塗りつぶす
                             </label>
-                            <button @click="cityNotations.splice(i, 1)">削除</button>
+                            <button @click.prevent="cityNotations.splice(i, 1) + update()">削除</button>
                         </div>
                     </template>
                 </section>
                 <section>
                     <h2>ラインカラー</h2>
-                    <button @click="routeColors.push('#000000')">追加</button>
+                    <button @click.prevent="routeColors.push('#000000') + update()">追加</button>
                     <template v-for="(n, i) in routeColors">
                         <div>
                             <label class="inline">
                                 <div class="label-text">色</div>
                                 <input type="color" v-model="routeColors[i]" list="routeColors">
                             </label>
-                            <button @click="routeColors.splice(i, 1)">削除</button>
+                            <button @click.prevent="routeColors.splice(i, 1) + update()">削除</button>
                         </div>
                     </template>
                 </section>
             </section>
-        </section>
+        </form>
 
         <datalist id="numberingColors">
             <option value="#A6A6A6"></option>

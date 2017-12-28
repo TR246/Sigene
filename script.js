@@ -1,5 +1,12 @@
 (() => {
     const TEXT_BLACK = "#1A1A1A";
+    const FONT_JAPANESE = "'Mplus 1p', sans-serif";
+    const FONT_HELVETICA = "'Helvetica', 'Arial', sans-serif";
+    const FONT_FRUTIGER = "'Lato', 'Cabin', sans-serif";
+    const FONT_CHINESE = "'Noto Sans SC', sans-serif";
+    const FONT_KOREAN = "'Noto Sans KR', sans-serif";
+    const SAVE_KEYS = ["size", "signType", "signBoard", "numbering", "branchRight", "branchLeft", "sta", "rightStations", "leftStations", "cityNotations", "routeColors"];
+    const DEFAULT_DATA = '{"size":{"width":2250,"height":600},"signType":"jre-kanji","signBoard":{"type":"led","light":true},"numbering":true,"branchRight":false,"branchLeft":false,"sta":{"name":{"kanji":"新宿","english":"Shinjuku","kana":"しんじゅく","chinese":"新宿","korean":"신주쿠"},"enableTlc":true,"tlc":"SJK","numberings":[{"text":"JY 17","color":"#72C11D"}]},"rightStations":[{"name":{"kanji":"新大久保","english":"Shin-Ōkubo"},"lineColor":"#006400","go":false,"numberings":[{"text":"JY 16","color":"#72C11D"}]},{"name":{"kanji":"","english":""},"lineColor":"#006400","go":false,"numberings":[]}],"leftStations":[{"name":{"kanji":"代々木","english":"Yoyogi"},"lineColor":"#006400","go":true,"numberings":[{"text":"JY 18","color":"#72C11D"}]},{"name":{"kanji":"","english":""},"lineColor":"#006400","go":false,"numberings":[]}],"cityNotations":[{"text":"山","fill":false},{"text":"区","fill":true}],"routeColors":["#80C241"]}';
 
     //Canvas
     const contain = (width1, height1, width2, height2) => {
@@ -97,7 +104,7 @@
                 //本体
                 ctx.shadowColor = "rgba(0, 0, 0, 0)";
                 ctx.shadowBlur = 0;
-                ctx.fillStyle = data.signBoard.light? "#F8FAFF" : "#CCC";
+                ctx.fillStyle = data.signBoard.light? "#F8FAFF" : "#EEE";
                 ctx.fillRect(70, 90, fw - 140, fh - 127);
             },
             shadow(ctx, fw, fh, scale, data){
@@ -316,18 +323,53 @@
                 maskCtx.fillText(text, x, y, maxWidth);
                 colorCtx.fillStyle = TEXT_BLACK;
                 const textWidth = Math.min(maxWidth || Infinity, maskCtx.measureText(text).width);
-                colorCtx.fillRect((align === "left"? x : x - textWidth / 2) - 10, y - size - 10, textWidth + 20, size + 40);
+                colorCtx.fillRect({left: x, right: x - textWidth}[align] || (x - textWidth / 2), y - size, textWidth, size * 1.22);
+                maskCtx.textAlign = "center";
                 return textWidth;
+            };
+
+            const insertSpace = (text, spaces) => text.split("").join(spaces[text.length - 2] || "");
+
+            const drawNumbering = (x, y, size, text, color, tlc) => {
+                const r = size * 0.1;
+                const innerSize = size - 2 * r;
+                const route = text.match(/[A-Z]{2}/g)[0];
+                const number = text.match(/[0-9]{2}/g)[0];
+                if(tlc){
+                    //角丸正方形
+                    roundRect(colorCtx, x, y, size, size, r);
+                    colorCtx.fillStyle = color;
+                    colorCtx.fill();
+                }else{
+                    //色塗り
+                    colorCtx.fillStyle = color;
+                    colorCtx.fillRect(Math.floor(x), Math.floor(y), Math.ceil(size) + 1, Math.ceil(size) + 1);
+                    //角丸正方形
+                    roundRect(maskCtx, x, y, size, size, r);
+                    maskCtx.fill();
+                }
+                //内側抜き
+                maskCtx.fillStyle = "#000";
+                maskCtx.fillRect(x + r, y + r, innerSize, innerSize);
+                maskCtx.fillStyle = "#FFF";
+                //テキスト
+                colorCtx.fillStyle = TEXT_BLACK;
+                colorCtx.fillRect(Math.ceil(x + r), Math.ceil(y + r), Math.floor(innerSize), Math.floor(innerSize));
+                maskCtx.textAlign = "center";
+                maskCtx.font = `bold ${r * 3}px 'Lato', 'Cabin', sans-serif`;
+                maskCtx.fillText(route, x + size / 2, y + 4 * r);
+                maskCtx.font = `bold ${r * 4.4}px 'Open Sans', sans-serif`;
+                maskCtx.fillText(number, x + size / 2, y + 8 * r);
             };
 
             //漢字
             const kanjiWidth = drawText({
                 x: hw,
                 y: lineTop - 140,
-                text: data.sta.name.kanji.split("").join(["　", " "][data.sta.name.kanji.length - 2] || ""),
+                text: insertSpace(data.sta.name.kanji, ["　", " "]),
                 weight: "800",
-                size: 170,
-                font: "'Mplus 1p', sans-serif"
+                size: 180,
+                font: FONT_JAPANESE
             });
             //ひらがな
             drawText({
@@ -336,25 +378,25 @@
                 text: data.sta.name.kana,
                 weight: "800",
                 size: 60,
-                font: "'Mplus 1p', sans-serif"
+                font: FONT_JAPANESE
             });
             //英語
-            drawText({
+            const englishWidth = drawText({
                 x: hw,
                 y: lineBottom + 100,
                 text: data.sta.name.english,
                 weight: "bold",
                 size: 80,
-                font: "'Helvetica', 'Arial', sans-serif"
+                font: FONT_HELVETICA
             });
             if(data.numbering){
                 //4ヶ国語表記
                 drawText({
                     x: hw + kanjiWidth / 2 + 80,
-                    y: lineTop - 220,
+                    y: lineTop - 230,
                     text: data.sta.name.chinese,
                     size: 50,
-                    font: "'Noto Sans SC', sans-serif",
+                    font: FONT_CHINESE,
                     align: "left"
                 });
                 drawText({
@@ -362,65 +404,117 @@
                     y: lineTop - 150,
                     text: data.sta.name.korean,
                     size: 50,
-                    font: "'Noto Sans KR', sans-serif",
+                    font: FONT_KOREAN,
                     align: "left"
                 });
 
                 //ナンバリング
-                const drawNumbering = (x, y, size, text, color, tlc) => {
-                    const r = size * 0.1;
-                    const innerSize = size - 2 * r;
-                    const route = text.match(/[A-Z]{2}/g)[0];
-                    const number = text.match(/[0-9]{2}/g)[0];
-                    if(tlc){
-                        //角丸正方形
-                        roundRect(colorCtx, x, y, size, size, r);
-                        colorCtx.fillStyle = color;
-                        colorCtx.fill();
-                    }else{
-                        //色塗り
-                        colorCtx.fillStyle = color;
-                        colorCtx.fillRect(Math.floor(x), Math.floor(y), Math.ceil(size), Math.ceil(size));
-                        //角丸正方形
-                        roundRect(maskCtx, x, y, size, size, r);
-                        maskCtx.fill();
-                    }
-                    //内側抜き
-                    maskCtx.fillStyle = "#000";
-                    maskCtx.fillRect(x + r, y + r, innerSize, innerSize);
-                    maskCtx.fillStyle = "#FFF";
-                    //テキスト
-                    colorCtx.fillStyle = TEXT_BLACK;
-                    colorCtx.fillRect(Math.ceil(x + r), Math.ceil(y + r), Math.floor(innerSize), Math.floor(innerSize));
-                    maskCtx.textAlign = "center";
-                    maskCtx.font = `bold ${r * 3}px 'Lato', 'Cabin', sans-serif`;
-                    maskCtx.fillText(route, x + size / 2, y + 4 * r);
-                    maskCtx.font = `bold ${r * 4.4}px 'Open Sans', sans-serif`;
-                    maskCtx.fillText(number, x + size / 2, y + 8 * r);
-                };
-
                 const len = data.sta.numberings.length;
                 const tlc = data.sta.enableTlc;
+                const tlcX = hw - kanjiWidth / 2 - 80 - 183.6*len;
+                const scale = (tlcX < branchStart - 50) && data.branchLeft? (tlc? 1.4 : 1.7) : 1.7;
                 if(tlc){
                     //スリーレターコード枠
-                    const x = hw - kanjiWidth / 2 - 80 - 183.6*len;
                     const y = lineTop - 290;
-                    const width = 183.6*len + 13.6;
-                    const height = 241.4;
+                    const width = (108*len + 8) * scale;
+                    const height = 142 * scale;
                     colorCtx.fillStyle = TEXT_BLACK;
-                    colorCtx.fillRect(Math.floor(x), Math.floor(y), Math.ceil(width), Math.ceil(height));
-                    roundRect(maskCtx, x, y, width, height, 30.6);
+                    colorCtx.fillRect(Math.floor(tlcX), Math.floor(y), Math.ceil(width) + 1, Math.ceil(height) + 1);
+                    roundRect(maskCtx, tlcX, y, width, height, 18 * scale);
                     maskCtx.fill();
-                    maskCtx.textAlign = "center";
-                    maskCtx.font = "bold 55px 'Lato', 'Cabin', sans-serif";
+                    maskCtx.font = `bold ${32 * scale}px ${FONT_FRUTIGER}`;
                     maskCtx.fillStyle = "#000";
-                    maskCtx.fillText(data.sta.tlc, x + width / 2, y + 51);
+                    maskCtx.fillText(data.sta.tlc, tlcX + width / 2, y + 30 * scale);
                     maskCtx.fillStyle = "#FFF";
                 }
                 for(let i = 0; i < len; i++){
-                    const n = data.sta.numberings[len - i - 1];
-                    drawNumbering(hw - kanjiWidth / 2 - 80 - 170 - 183.6*i, lineTop - (tlc? 290 - 57.8 : 290), 170, n.text, n.color, true);
+                    const i_ = len - i - 1;
+                    const n = data.sta.numberings[i_];
+                    drawNumbering(tlcX + 8 * scale + 108*scale*i_, lineTop - (tlc? 290 - 34*scale : 290), 100 * scale, n.text, n.color, tlc);
                 }
+            }
+
+            const {branchRight, branchLeft} = data;
+            //右駅名
+            for(let i = 0, len = branchRight? 2 : 1; i < len; i++){
+                const s = data.rightStations[i];
+                const x = width - (branchRight? 160 : (s.go? 250 : 100));
+                const maxWidth = Math.min(
+                    x - (branchRight? width - branchStart + 80 : hw + lineHeight),
+                    branchRight? x - width + branchStart - 120 : x - hw - englishWidth / 2 - 50);
+                maskCtx.fillStyle = "#000";
+                maskCtx.textAlign = "right";
+                maskCtx.textBaseline = "middle";
+                maskCtx.font = `500 ${branchRight? 70 : (s.go? 90 : 80)}px ${FONT_JAPANESE}`;
+                maskCtx.fillText(insertSpace(s.name.kanji, [" "]), x, branchRight? [lineTop - 32, lineBottom + 32][i] : lineY, maxWidth);
+                maskCtx.fillStyle = "#FFF";
+                maskCtx.textBaseline = "alphabetic";
+                drawText({
+                    x,
+                    y: branchRight? [lineTop + 66, lineBottom + 130][i] : lineBottom + 90,
+                    text: s.name.english,
+                    size: branchRight? 50 : 70,
+                    font: FONT_HELVETICA,
+                    align: "right",
+                    maxWidth
+                });
+                const nSize = branchRight? 60 : 100;
+                for(let j = 0, len = s.numberings.length; data.numbering && s.go && j < len; j++){
+                    //ナンバリング
+                    const n = s.numberings[j];
+                    drawNumbering(width - (branchRight? 150 : 230) + nSize * 1.08 * j, branchRight? [lineTop + 12, lineBottom + 76][i] : lineBottom + 15, nSize, n.text, n.color);
+                }
+            }
+
+            //左駅名
+            for(let i = 0, len = branchLeft? 2 : 1; i < len; i++){
+                const s = data.leftStations[i];
+                const x = (branchLeft? 160 : (s.go? 250 : 100));
+                const maxWidth = Math.min(
+                    (branchLeft? branchStart - 80 : hw - lineHeight) - x,
+                    branchLeft? branchStart + 120 - x : hw - englishWidth / 2 - 50 - x);
+                maskCtx.fillStyle = "#000";
+                maskCtx.textAlign = "left";
+                maskCtx.textBaseline = "middle";
+                maskCtx.font = `500 ${branchLeft? 70 : (s.go? 90 : 80)}px ${FONT_JAPANESE}`;
+                maskCtx.fillText(insertSpace(s.name.kanji, [" "]), x, branchLeft? [lineTop - 32, lineBottom + 32][i] : lineY, maxWidth);
+                maskCtx.fillStyle = "#FFF";
+                maskCtx.textBaseline = "alphabetic";
+                drawText({
+                    x,
+                    y: branchLeft? [lineTop + 66, lineBottom + 130][i] : lineBottom + 90,
+                    text: s.name.english,
+                    size: branchLeft? 50 : 70,
+                    font: FONT_HELVETICA,
+                    align: "left",
+                    maxWidth
+                });
+                const nSize = branchLeft? 60 : 100;
+                for(let j = 0, len = s.numberings.length; data.numbering && s.go && j < len; j++){
+                    //ナンバリング
+                    const n = s.numberings[j];
+                    drawNumbering((branchLeft? 80 : 130) + nSize * 1.08 * (j - len + 1), branchLeft? [lineTop + 12, lineBottom + 76][i] : lineBottom + 15, nSize, n.text, n.color);
+                }
+            }
+            maskCtx.textAlign = "center";
+
+            //特定都区市内表記
+            maskCtx.lineWidth = 4;
+            maskCtx.textAlign = "center";
+            for(let i = 0, len = data.cityNotations.length; i < len; i++){
+                const n = data.cityNotations[len - i - 1];
+                const x = width - 200 - 130 * i;
+                const y = lineTop - (n.fill? 290 : 288);
+                //色塗り
+                colorCtx.fillStyle = TEXT_BLACK;
+                colorCtx.fillRect(Math.floor(x), Math.floor(y), 101, 101);
+                //角丸四角形
+                roundRect(maskCtx, x, y, 100, 100, n.fill? 10 : 9);
+                maskCtx[n.fill? "fill" : "stroke"]();
+                //文字
+                maskCtx.fillStyle = n.fill? "#000" : "#FFF";
+                maskCtx.font = `bold 90px ${FONT_JAPANESE}`;
+                maskCtx.fillText(n.text, x + 50, y + 85, 90);
             }
         }
     };
@@ -428,8 +522,19 @@
     //描画
     const canvas1 = document.getElementById("canvas1");
     const ctx1 = canvas1.getContext("2d");
+    const $message = document.getElementById("message");
 
     const update = function(){
+        //チェック
+        if(!this.$el.checkValidity()){
+            $message.classList.add("show");
+            return;
+        }
+        $message.classList.remove("show");
+        //保存
+        const data = {};
+        SAVE_KEYS.forEach(key => data[key] = this[key])
+        localStorage.setItem("lastSaved", JSON.stringify(data));
         setTimeout(() => {
             const {size: {width, height}, signBoard} = this;
 
@@ -527,6 +632,12 @@
         el: "#vm",
         //mounted: update,
         mounted(){
+            const lastSaved = JSON.parse(localStorage.getItem("lastSaved"));
+            if(lastSaved){
+                SAVE_KEYS.forEach(key => this[key] = lastSaved[key]);
+            }else{
+                localStorage.setItem("lastSaved", DEFAULT_DATA);
+            }
             this.update();
             this.loadFont('japanese');
             this.loadFont('chinese');
@@ -549,61 +660,58 @@
                 light: true
             },
             numbering: true,
-            branchRight: true,
+            branchRight: false,
             branchLeft: false,
             sta: {
                 name: {
-                    kanji: "大宮",
-                    english: "Ōmiya",
-                    kana: "おおみや",
-                    chinese: "大宫",
-                    korean: "오미야"
+                    kanji: "新宿",
+                    english: "Shinjuku",
+                    kana: "しんじゅく",
+                    chinese: "新宿",
+                    korean: "신주쿠"
                 },
                 enableTlc: true,
-                tlc: "OMY",
+                tlc: "SJK",
                 numberings: [{
-                    text: "JU 07",
-                    color: "#F68B1E"
-                }, {
-                    text: "JS 24",
-                    color: "#C9242F"
+                    text: "JY 17",
+                    color: "#72C11D"
                 }]
             },
             rightStations: [
                 {
                     name: {
-                        kanji: "さいたま新都心",
-                        english: "Saitama-Shintoshin"
+                        kanji: "新大久保",
+                        english: "Shin-Ōkubo"
                     },
                     lineColor: "#006400",
-                    go: true,
+                    go: false,
                     numberings: [{
-                        text: "JU 06",
-                        color: "#F68B1E"
+                        text: "JY 16",
+                        color: "#72C11D"
                     }]
                 },
                 {
                     name: {
-                        kanji: "浦和",
-                        english: "Urawa"
+                        kanji: "",
+                        english: ""
                     },
                     lineColor: "#006400",
-                    go: true,
-                    numberings: [{
-                        text: "JS 23",
-                        color: "#C9242F"
-                    }]
+                    go: false,
+                    numberings: []
                 }
             ],
             leftStations: [
                 {
                     name: {
-                        kanji: "土呂",
-                        english: "Toro"
+                        kanji: "代々木",
+                        english: "Yoyogi"
                     },
                     lineColor: "#006400",
-                    go: false,
-                    numberings: []
+                    go: true,
+                    numberings: [{
+                        text: "JY 18",
+                        color: "#72C11D"
+                    }]
                 },
                 {
                     name: {
@@ -622,7 +730,7 @@
                 text: "区",
                 fill: true
             }],
-            routeColors: ["#F68B1E", "#007AC0"]
+            routeColors: ["#80C241"]
         },
         computed: {
             enableBoardLight(){
@@ -634,7 +742,7 @@
                 const self = this;
                 const config = {
                     japanese: {
-                        families: ["Mplus 1p:n8"],
+                        families: ["Mplus 1p:n5,n8"],
                         urls: ["https://fonts.googleapis.com/earlyaccess/mplus1p.css"]
                     },
                     chinese: {
@@ -668,7 +776,12 @@
                     c => String.fromCharCode(c.charCodeAt(0) - 65248))
                     .toUpperCase();
             },
-            save(){},
+            reset(){
+                localStorage.removeItem("lastSaved");
+                localStorage.setItem("lastSaved", DEFAULT_DATA);
+                lastSaved = JSON.parse(DEFAULT_DATA);
+                SAVE_KEYS.forEach(key => this[key] = lastSaved[key]);
+            },
             saveAsPNG, update
         }
     });
