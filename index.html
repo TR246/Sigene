@@ -14,7 +14,7 @@
     <body>
         <header>
             <div class="header-flex">
-                <h1><!--<img src="logo_text_white.svg" alt="Sigene"> --><small>駅名標ジェネレーター</small></h1>
+                <h1><!--<img src="header_logo.svg" alt="Sigene Beta">--><small>駅名標ジェネレーター</small></h1>
                 <ul>
                     <li><a href="index.html">Top</a></li>
                     <li><a href="about/index.html">About</a></li>
@@ -32,6 +32,7 @@
                 <section>
                     <button @click.prevent="reset() + update()">入力内容をリセット</button>
                     <button @click.prevent="saveAsPNG() + update()">画像として保存</button>
+                    <button @click.prevent="share_url">共有URLを取得</button>
                 </section>
                 <section>
                     <button @click.prevent="loadFont('japanese')" :disabled="fontLoad.japanese">日本語フォントをロードする(約700KB ～ 約1.6MB)</button>
@@ -40,17 +41,6 @@
                 </section>
             </section>
             <section class="row">
-                <section>
-                    <h2>駅名標サイズ</h2>
-                    <label>
-                        <div class="label-text">幅</div>
-                        <input v-model.number="size.width" type="number" step="10" min="0">mm
-                    </label>
-                    <label>
-                        <div class="label-text">高さ</div>
-                        <input v-model.number="size.height" type="number" step="10" min="0">mm
-                    </label>
-                </section>
                 <section>
                     <h2>駅名標タイプ</h2>
                     <label>
@@ -68,10 +58,9 @@
                         <div class="label-text">筐体タイプ</div>
                         <div class="input">
                             <select v-model="signBoard.type" @change="changeBoardType">
-                                <option value="none">なし</option>
-                                <option value="floure">蛍光灯型</option>
-                                <option value="led">LED型</option>
-                                <option value="nonLight">無電照型</option>
+                                <option value="SE-6">SE-6型(LED)</option>
+                                <option value="SE-7">SE-7型(LED)</option>
+                                <option value="SE-8">SE-8型(LED)</option>
                             </select>
                         </div>
                     </label>
@@ -103,6 +92,12 @@
                             v-model="branchLeft">
                         <span class="toggle"></span>
                         左分岐
+                    </label>
+                    <label>
+                        <div class="label-text">黒として使う色</div>
+                        <input
+                            type="color"
+                            v-model="black">
                     </label>
                 </section>
                 <section>
