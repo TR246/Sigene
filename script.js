@@ -42,7 +42,7 @@
             ctx.lineTo(fw - 6, 6);
             ctx.lineTo(fw - 6, fh);
             ctx.lineWidth = 2;
-            ctx.strokeStyle = data.black;
+            ctx.strokeStyle = "#1A1A1A";
             ctx.stroke();
 
             //上部
@@ -372,16 +372,16 @@
             //漢字
             const kanjiWidth = drawText({
                 x: hw,
-                y: lineTop - 110,
+                y: lineTop - 120,
                 text: insertSpace(data.sta.name.kanji, ["　", " "]),
                 weight: "800",
-                size: 140,
+                size: 150,
                 font: FONT_JAPANESE
             });
             //ひらがな
             drawText({
                 x: hw,
-                y: lineTop - 25,
+                y: lineTop - 40,
                 text: data.sta.name.kana,
                 weight: "800",
                 size: 50,
@@ -401,7 +401,7 @@
                 //4ヶ国語表記
                 drawText({
                     x: hw + kanjiWidth / 2 + 65,
-                    y: lineTop - 180,
+                    y: lineTop - 200,
                     text: data.sta.name.chinese,
                     size: 40,
                     font: FONT_CHINESE,
