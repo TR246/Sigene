@@ -515,7 +515,7 @@
         $message.classList.remove("show");
         //保存
         const data = {};
-        SAVE_KEYS.forEach(key => data[key] = this[key])
+        SAVE_KEYS.forEach(key => data[key] = this[key]);
         localStorage.setItem("lastSaved", JSON.stringify(data));
         setTimeout(() => {
             const {signBoard} = this;
@@ -614,16 +614,22 @@
         el: "#vm",
         //mounted: update,
         mounted(){
-            const lastSaved = JSON.parse(localStorage.getItem("lastSaved"));
-            if(lastSaved){
-                SAVE_KEYS.forEach(key => this[key] = lastSaved[key]);
+            let openData;
+            if(location.search.match(/\?data=/)){
+                //URLパラメーターがついていれば
+                openData = JSON.parse(LZString.decompressFromEncodedURIComponent(location.search.slice(6)));
+            }else{
+                openData = JSON.parse(localStorage.getItem("lastSaved"));
+            }
+            if(openData){
+                SAVE_KEYS.forEach(key => this[key] = openData[key]);
             }else{
                 localStorage.setItem("lastSaved", DEFAULT_DATA);
             }
             this.update();
-            this.loadFont('japanese');
+            /*this.loadFont('japanese');
             this.loadFont('chinese');
-            this.loadFont('korean');
+            this.loadFont('korean');*/
         },
         data: {
             macrons: ["Ā", "Ē", "Ī", "Ō", "Ū", "ā", "ē", "ī", "ō", "ū"],
@@ -632,6 +638,7 @@
                 chinese: false,
                 korean: false
             },
+            shareURL: "",
             signType: "jre-kanji",
             signBoard: {
                 type: "SE-6",
@@ -763,7 +770,19 @@
                 SAVE_KEYS.forEach(key => this[key] = lastSaved[key]);
             },
             share_url(){
-                console.log(location.href + "?");
+                //保存
+                const data = {};
+                SAVE_KEYS.forEach(key => data[key] = this[key]);
+                const json = JSON.stringify(data);
+                localStorage.setItem("lastSaved", json);
+                this.shareURL = location.href + "?data=" + LZString.compressToEncodedURIComponent(json);
+            },
+            copy(text){
+                document.addEventListener("copy", e => {
+                    e.preventDefault();
+                    e.clipboardData.setData("text/plain", text);
+                }, {once: true});
+                document.execCommand("copy");
             },
             saveAsPNG, update
         }

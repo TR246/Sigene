@@ -79,7 +79,7 @@ button:disabled {
     width: 100%;
     height: 5em;
 }
-label {
+label, .label {
     margin: 10px 0;
     display: block;
     cursor: pointer;

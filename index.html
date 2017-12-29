@@ -32,7 +32,12 @@
                 <section>
                     <button @click.prevent="reset() + update()">入力内容をリセット</button>
                     <button @click.prevent="saveAsPNG() + update()">画像として保存</button>
-                    <button @click.prevent="share_url">共有URLを取得</button>
+                    <div class="label">
+                        <div class="label-text">共有URL</div>
+                        <button @click.prevent="share_url">共有URLを取得</button>
+                        <input type="text" v-model="shareURL">
+                        <button @click.prevent="copy(shareURL)">コピー</button>
+                    </div>
                 </section>
                 <section>
                     <button @click.prevent="loadFont('japanese')" :disabled="fontLoad.japanese">日本語フォントをロードする(約700KB ～ 約1.6MB)</button>
@@ -506,6 +511,7 @@
 
         <script src="https://unpkg.com/vue" defer></script>
         <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js" defer></script>
         <script src="script.js" defer></script>
     </body>
 </html>
