@@ -5,7 +5,7 @@
     const FONT_CHINESE = "'Noto Sans SC', sans-serif";
     const FONT_KOREAN = "'Noto Sans KR', sans-serif";
     const SAVE_KEYS = ["signType", "signBoard", "numbering", "branchRight", "branchLeft", "black", "sta", "rightStations", "leftStations", "cityNotations", "routeColors"];
-    const DEFAULT_DATA = '{"signType":"jre-kanji","signBoard":{"type":"SE-6","light":true},"numbering":true,"branchRight":false,"branchLeft":false,black:"#1A1A1A","sta":{"name":{"kanji":"新宿","english":"Shinjuku","kana":"しんじゅく","chinese":"新宿","korean":"신주쿠"},"enableTlc":true,"tlc":"SJK","numberings":[{"text":"JY 17","color":"#72C11D"}]},"rightStations":[{"name":{"kanji":"新大久保","english":"Shin-Ōkubo"},"lineColor":"#006400","go":false,"numberings":[{"text":"JY 16","color":"#72C11D"}]},{"name":{"kanji":"","english":""},"lineColor":"#006400","go":false,"numberings":[]}],"leftStations":[{"name":{"kanji":"代々木","english":"Yoyogi"},"lineColor":"#006400","go":true,"numberings":[{"text":"JY 18","color":"#72C11D"}]},{"name":{"kanji":"","english":""},"lineColor":"#006400","go":false,"numberings":[]}],"cityNotations":[{"text":"山","fill":false},{"text":"区","fill":true}],"routeColors":["#80C241"]}';
+    const DEFAULT_DATA = '{"signType":"jre-kanji","signBoard":{"type":"SE-6","light":true},"numbering":true,"branchRight":false,"branchLeft":false,"black":"#1A1A1A","sta":{"name":{"kanji":"新宿","english":"Shinjuku","kana":"しんじゅく","chinese":"新宿","korean":"신주쿠"},"enableTlc":true,"tlc":"SJK","numberings":[{"text":"JY 17","color":"#72C11D"}]},"rightStations":[{"name":{"kanji":"新大久保","english":"Shin-Ōkubo"},"lineColor":"#006400","go":false,"numberings":[{"text":"JY 16","color":"#72C11D"}]},{"name":{"kanji":"","english":""},"lineColor":"#006400","go":false,"numberings":[]}],"leftStations":[{"name":{"kanji":"代々木","english":"Yoyogi"},"lineColor":"#006400","go":true,"numberings":[{"text":"JY 18","color":"#72C11D"}]},{"name":{"kanji":"","english":""},"lineColor":"#006400","go":false,"numberings":[]}],"cityNotations":[{"text":"山","fill":false},{"text":"区","fill":true}],"routeColors":["#80C241"]}';
 
     //Canvas
     const contain = (width1, height1, width2, height2) => {
@@ -326,7 +326,13 @@
                 const textWidth = Math.min(maxWidth || Infinity, maskCtx.measureText(text).width);
                 colorCtx.fillRect({left: x, right: x - textWidth}[align] || (x - textWidth / 2), y - size, textWidth, size * 1.22);
                 maskCtx.textAlign = "center";
-                return textWidth;
+                return Math.min(textWidth, maxWidth || Infinity);
+            };
+            const measureText = options => {
+                const {text, weight, size, font, maxWidth} = options;
+                maskCtx.font = `${weight || ""} ${size}px ${font}`;
+                const textWidth = Math.min(maxWidth || Infinity, maskCtx.measureText(text).width);
+                return Math.min(textWidth, maxWidth || Infinity);
             };
 
             const insertSpace = (text, spaces) => text.split("").join(spaces[text.length - 2] || "");
@@ -390,6 +396,7 @@
                 size: 65,
                 font: FONT_HELVETICA
             });
+            //maxWidth: (data.branchRight || data.branchLeft)? width - branchStart * 2 : width / 2
             if(data.numbering){
                 //4ヶ国語表記
                 drawText({
@@ -410,14 +417,14 @@
                 });
 
                 //ナンバリング
-                const len = data.sta.numberings.length;
                 const tlc = data.sta.enableTlc;
-                const tlcX = hw - kanjiWidth / 2 - 80 - 183.6*len;
+                const nbLen = data.sta.numberings.length;
+                const tlcX = Math.max(25, hw - kanjiWidth / 2 - 80 - 183.6*nbLen);
                 const scale = (tlcX < branchStart - 50) && data.branchLeft && tlc? 1.2 : 1.5;
                 if(tlc){
                     //スリーレターコード枠
                     const y = lineTop - 250;
-                    const width = (108*len + 8) * scale;
+                    const width = (108*nbLen + 8) * scale;
                     const height = 142 * scale;
                     colorCtx.fillStyle = data.black;
                     colorCtx.fillRect(Math.floor(tlcX), Math.floor(y), Math.ceil(width) + 1, Math.ceil(height) + 1);
@@ -428,8 +435,8 @@
                     maskCtx.fillText(data.sta.tlc, tlcX + width / 2, y + 30 * scale);
                     maskCtx.fillStyle = "#FFF";
                 }
-                for(let i = 0; i < len; i++){
-                    const i_ = len - i - 1;
+                for(let i = 0; i < nbLen; i++){
+                    const i_ = nbLen - i - 1;
                     const n = data.sta.numberings[i_];
                     drawNumbering(tlcX + 8 * scale + 108*scale*i_, lineTop - (tlc? 250 - 34*scale : 250), 100 * scale, n.text, n.color, tlc);
                 }
