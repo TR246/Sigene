@@ -32,8 +32,7 @@
                 <section>
                     <button @click.prevent="reset() + update()">入力内容をリセット</button>
                     <button @click.prevent="saveAsPNG() + update()">画像として保存</button>
-                    <div class="label">
-                        <div class="label-text">共有URL</div>
+                    <div>
                         <button @click.prevent="share_url">共有URLを取得</button>
                         <input type="text" v-model="shareURL">
                         <button @click.prevent="copy(shareURL)">コピー</button>
@@ -50,7 +49,7 @@
                     <h2>駅名標タイプ</h2>
                     <label>
                         <div class="label-text">タイプ</div>
-                        <select v-model="signType">
+                        <select v-model="signType"> <!--カンマは使用不可-->
                             <option value="jre-kanji">JR東日本 漢字主体</option>
                         </select>
                     </label>
@@ -62,7 +61,7 @@
                     <label>
                         <div class="label-text">筐体タイプ</div>
                         <div class="input">
-                            <select v-model="signBoard.type" @change="changeBoardType">
+                            <select v-model="signBoard.type" @change="changeBoardType"> <!--カンマは使用不可-->
                                 <option value="SE-6">SE-6型(LED)</option>
                                 <option value="SE-7">SE-7型(LED)</option>
                                 <option value="SE-8">SE-8型(LED)</option>

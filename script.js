@@ -4,8 +4,264 @@
     const FONT_FRUTIGER = "'Lato', 'Cabin', sans-serif";
     const FONT_CHINESE = "'Noto Sans SC', sans-serif";
     const FONT_KOREAN = "'Noto Sans KR', sans-serif";
-    const SAVE_KEYS = ["signType", "signBoard", "numbering", "branchRight", "branchLeft", "black", "sta", "rightStations", "leftStations", "cityNotations", "routeColors"];
-    const DEFAULT_DATA = '{"signType":"jre-kanji","signBoard":{"type":"SE-6","light":true},"numbering":true,"branchRight":false,"branchLeft":false,"black":"#1A1A1A","sta":{"name":{"kanji":"新宿","english":"Shinjuku","kana":"しんじゅく","chinese":"新宿","korean":"신주쿠"},"enableTlc":true,"tlc":"SJK","numberings":[{"text":"JY 17","color":"#72C11D"}]},"rightStations":[{"name":{"kanji":"新大久保","english":"Shin-Ōkubo"},"lineColor":"#006400","go":false,"numberings":[{"text":"JY 16","color":"#72C11D"}]},{"name":{"kanji":"","english":""},"lineColor":"#006400","go":false,"numberings":[]}],"leftStations":[{"name":{"kanji":"代々木","english":"Yoyogi"},"lineColor":"#006400","go":true,"numberings":[{"text":"JY 18","color":"#72C11D"}]},{"name":{"kanji":"","english":""},"lineColor":"#006400","go":false,"numberings":[]}],"cityNotations":[{"text":"山","fill":false},{"text":"区","fill":true}],"routeColors":["#80C241"]}';
+    const defaultData = () => ({
+        signType: "jre-kanji",
+        signBoard: {
+            type: "SE-6",
+            light: true
+        },
+        numbering: true,
+        branchRight: false,
+        branchLeft: false,
+        black: "#1A1A1A",
+        sta: {
+            name: {
+                kanji: "新宿",
+                english: "Shinjuku",
+                kana: "しんじゅく",
+                chinese: "新宿",
+                korean: "신주쿠"
+            },
+            enableTlc: true,
+            tlc: "SJK",
+            numberings: [{
+                text: "JY 17",
+                color: "#72C11D"
+            }]
+        },
+        rightStations: [
+            {
+                name: {
+                    kanji: "新大久保",
+                    english: "Shin-Ōkubo"
+                },
+                lineColor: "#006400",
+                go: false,
+                numberings: [{
+                    text: "JY 16",
+                    color: "#72C11D"
+                }]
+            },
+            {
+                name: {
+                    kanji: "",
+                    english: ""
+                },
+                lineColor: "#006400",
+                go: false,
+                numberings: []
+            }
+        ],
+        leftStations: [
+            {
+                name: {
+                    kanji: "代々木",
+                    english: "Yoyogi"
+                },
+                lineColor: "#006400",
+                go: true,
+                numberings: [{
+                    text: "JY 18",
+                    color: "#72C11D"
+                }]
+            },
+            {
+                name: {
+                    kanji: "",
+                    english: ""
+                },
+                lineColor: "#006400",
+                go: false,
+                numberings: []
+            }
+        ],
+        cityNotations: [{
+            text: "山",
+            fill: false
+        }, {
+            text: "区",
+            fill: true
+        }],
+        routeColors: ["#80C241"]
+    });
+
+    //離脱確認
+    window.addEventListener("beforeunload", e => e.returnValue = "このページから離れてもよろしいですか");
+
+    //専用フォーマット
+    const desig1 = {
+        stringify(data){
+            //文字列化
+            const strLength = str => str.length + ":" + str;
+            const stringifyNumberings = numberings => numberings.length  + ":" + numberings.map(n => n.text + "," + n.color.slice(1) + ";").join("");
+            let rtn = "";
+            const {numbering, branchRight, branchLeft, sta, cityNotations, routeColors} = data;
+            rtn += data.signType + ",";
+            rtn += data.signBoard.type + ",";
+            rtn += data.signBoard.light? "1" : "0";
+            rtn += numbering? "1" : "0";
+            rtn += branchRight? "1" : "0";
+            rtn += branchLeft? "1" : "0";
+            rtn += data.black.slice(1);
+            rtn += strLength(sta.name.kanji);
+            rtn += strLength(sta.name.english);
+            rtn += strLength(sta.name.kana);
+            if(numbering){
+                rtn += strLength(sta.name.chinese);
+                rtn += strLength(sta.name.korean);
+                rtn += sta.enableTlc? "1" + sta.tlc : "0";
+                rtn += stringifyNumberings(sta.numberings);
+            }
+
+            ssta(data.rightStations[0]);
+            if(branchRight){
+                ssta(data.rightStations[1]);
+            }
+            ssta(data.leftStations[0]);
+            if(branchLeft){
+                ssta(data.leftStations[1]);
+            }
+
+            function ssta(sta){
+                rtn += strLength(sta.name.kanji);
+                rtn += strLength(sta.name.english);
+                rtn += sta.lineColor.slice(1);
+                rtn += sta.go? "1" : "0";
+                if(numbering && sta.go){
+                    rtn += stringifyNumberings(sta.numberings);
+                }
+            }
+
+            rtn += cityNotations.length + ":" + cityNotations.map(n => n.text + (n.fill? "1" : "0")).join("");
+            rtn += routeColors.length + ":" + routeColors.map(color => color.slice(1)).join("");
+
+            return rtn;
+        },
+        parse(str){
+            //パース
+            let current = 0;
+            
+            const parseLengthStr = pos => {
+                const colon = str.indexOf(":", pos);
+                const len = str.slice(pos, colon) - 0;
+                current = colon + len + 1;
+                return str.substr(colon + 1, len);
+            };
+            const parseNumberings = pos => {
+                const colon = str.indexOf(":", pos);
+                const len = str.slice(pos, colon) - 0;
+                const rtn = [];
+                current = colon + 1;
+                for(let i = 0; i < len; i++){
+                    const semColon = str.indexOf(";", current);
+                    const [text, color] =  str.slice(current, semColon).split(",");
+                    rtn.push({text, color: "#" + color});
+                    current = semColon + 1;
+                }
+                return rtn;
+            };
+            const data = defaultData();
+            
+            const signTypePos = str.indexOf(",");
+            data.signType = str.slice(0, signTypePos);
+            current = signTypePos + 1;
+
+            const signBoardTypePos = str.indexOf(",", current);
+            data.signBoard.type = str.slice(current, signBoardTypePos);
+            current = signBoardTypePos + 1;
+            data.signBoard.light = Boolean(str[current] - 0);
+
+            const numbering = Boolean(str[++current] - 0);
+            data.numbering = numbering;
+
+            const branchRight = Boolean(str[++current] - 0);
+            data.branchRight = branchRight;
+
+            const branchLeft = Boolean(str[++current] - 0);
+            data.branchLeft = branchLeft;
+
+            data.black = "#" + str.substr(++current, 6);
+            current += 6;
+
+            data.sta.name.kanji = parseLengthStr(current);
+            data.sta.name.english = parseLengthStr(current);
+            data.sta.name.kana = parseLengthStr(current);
+            if(numbering){
+                data.sta.name.chinese = parseLengthStr(current);
+                data.sta.name.korean = parseLengthStr(current);
+
+                const tlc = Boolean(str[current++] - 0);
+                data.sta.enableTlc = tlc;
+
+                if(tlc){
+                    data.sta.tlc = str.substr(current, 3);
+                    current += 3;
+                }else{
+                    data.sta.tlc = "";
+                }
+
+                data.sta.numberings = parseNumberings(current);
+            }else{
+                data.sta.chinese = "";
+                data.sta.korean = "";
+
+                data.sta.enableTlc = false;
+
+                data.sta.tlc = "";
+
+                data.sta.numberings = [];
+            }
+
+            ssta(data.rightStations[0]);
+            if(branchRight){
+                ssta(data.rightStations[1]);
+            }
+            ssta(data.leftStations[0]);
+            if(branchLeft){
+                ssta(data.leftStations[1]);
+            }
+
+            function ssta(sta){
+                sta.name.kanji = parseLengthStr(current);
+                sta.name.english = parseLengthStr(current);
+
+                sta.lineColor = "#" + str.substr(current, 6);
+                current += 6;
+
+                const go = Boolean(str[current++] - 0);
+                sta.go = go;
+
+                if(numbering && go){
+                    sta.numberings = parseNumberings(current);
+                }else{
+                    sta.numberings = [];
+                }
+            }
+
+            data.cityNotations = [];
+            const ccolon = str.indexOf(":", current);
+            const clen = str.slice(current, ccolon) - 0;
+            current = ccolon + 1;
+            for(let i = 0; i < clen; i++){
+                data.cityNotations.push({
+                    text: str[current],
+                    fill: Boolean(str[current + 1] - 0)
+                });
+                current += 2;
+            }
+
+            data.routeColors = [];
+            const rccolon = str.indexOf(":", current);
+            const rclen = str.slice(current, rccolon) - 0;
+            current = rccolon + 1;
+            for(let i = 0; i < rclen; i++){
+                data.routeColors.push("#" + str.substr(current, 6));
+                current += 6;
+            }
+
+            return data;
+        }
+    }
 
     //Canvas
     const contain = (width1, height1, width2, height2) => {
@@ -513,10 +769,11 @@
             return;
         }
         $message.classList.remove("show");
+
         //保存
-        const data = {};
-        SAVE_KEYS.forEach(key => data[key] = this[key]);
-        localStorage.setItem("lastSaved", JSON.stringify(data));
+        localStorage.setItem("lastSaved", LZString.compressToEncodedURIComponent(desig1.stringify(this)));
+
+        //描画処理
         setTimeout(() => {
             const {signBoard} = this;
 
@@ -604,120 +861,43 @@
     }
 
     //Vue
-    const replaceProperty = (obj, key, replacer) => {
+    /*const replaceProperty = (obj, key, replacer) => {
         const keys = key.split(".");
         const last = keys.pop();
         const sObj = keys.reduce((obj, key) => obj[key.trim()], obj);
         sObj[last] = replacer(sObj[last]);
-    };
+    };*/
     const vm = new Vue({
         el: "#vm",
-        //mounted: update,
         mounted(){
+            const lastSaved = localStorage.getItem("lastSaved");
             let openData;
-            if(location.search.match(/\?data=/)){
-                //URLパラメーターがついていれば
-                openData = JSON.parse(LZString.decompressFromEncodedURIComponent(location.search.slice(6)));
-            }else{
-                openData = JSON.parse(localStorage.getItem("lastSaved"));
+            if(location.search.match(/\?desig1=/)){
+                //URLパラメーターがdesig1フォーマットなら
+                openData = desig1.parse(LZString.decompressFromEncodedURIComponent(location.search.slice(8)));
+            }else if(lastSaved){
+                //URLパラメーターがなければ
+                openData = desig1.parse(LZString.decompressFromEncodedURIComponent(lastSaved));
             }
+
             if(openData){
-                SAVE_KEYS.forEach(key => this[key] = openData[key]);
-            }else{
-                localStorage.setItem("lastSaved", DEFAULT_DATA);
+                Object.keys(openData).forEach(key => this[key] = openData[key]);
             }
+
             this.update();
             /*this.loadFont('japanese');
             this.loadFont('chinese');
             this.loadFont('korean');*/
         },
-        data: {
+        data: () => Object.assign(defaultData(), {
             macrons: ["Ā", "Ē", "Ī", "Ō", "Ū", "ā", "ē", "ī", "ō", "ū"],
             fontLoad: {
                 japanese: false,
                 chinese: false,
                 korean: false
             },
-            shareURL: "",
-            signType: "jre-kanji",
-            signBoard: {
-                type: "SE-6",
-                light: true
-            },
-            numbering: true,
-            branchRight: false,
-            branchLeft: false,
-            black: "#1A1A1A",
-            sta: {
-                name: {
-                    kanji: "新宿",
-                    english: "Shinjuku",
-                    kana: "しんじゅく",
-                    chinese: "新宿",
-                    korean: "신주쿠"
-                },
-                enableTlc: true,
-                tlc: "SJK",
-                numberings: [{
-                    text: "JY 17",
-                    color: "#72C11D"
-                }]
-            },
-            rightStations: [
-                {
-                    name: {
-                        kanji: "新大久保",
-                        english: "Shin-Ōkubo"
-                    },
-                    lineColor: "#006400",
-                    go: false,
-                    numberings: [{
-                        text: "JY 16",
-                        color: "#72C11D"
-                    }]
-                },
-                {
-                    name: {
-                        kanji: "",
-                        english: ""
-                    },
-                    lineColor: "#006400",
-                    go: false,
-                    numberings: []
-                }
-            ],
-            leftStations: [
-                {
-                    name: {
-                        kanji: "代々木",
-                        english: "Yoyogi"
-                    },
-                    lineColor: "#006400",
-                    go: true,
-                    numberings: [{
-                        text: "JY 18",
-                        color: "#72C11D"
-                    }]
-                },
-                {
-                    name: {
-                        kanji: "",
-                        english: ""
-                    },
-                    lineColor: "#006400",
-                    go: false,
-                    numberings: []
-                }
-            ],
-            cityNotations: [{
-                text: "山",
-                fill: false
-            }, {
-                text: "区",
-                fill: true
-            }],
-            routeColors: ["#80C241"]
-        },
+            shareURL: ""
+        }),
         computed: {
             enableBoardLight(){
                 const t = this.signBoard.type;
@@ -764,18 +944,13 @@
                     .toUpperCase();
             },
             reset(){
-                localStorage.removeItem("lastSaved");
-                localStorage.setItem("lastSaved", DEFAULT_DATA);
-                const lastSaved = JSON.parse(DEFAULT_DATA);
-                SAVE_KEYS.forEach(key => this[key] = lastSaved[key]);
+                const df = defaultData();
+                Object.keys(df).forEach(key => this[key] = df[key]);
             },
             share_url(){
+                if(!this.$el.checkValidity()) return;
                 //保存
-                const data = {};
-                SAVE_KEYS.forEach(key => data[key] = this[key]);
-                const json = JSON.stringify(data);
-                localStorage.setItem("lastSaved", json);
-                this.shareURL = location.href + "?data=" + LZString.compressToEncodedURIComponent(json);
+                this.shareURL = location.protocol + "//" + location.host + location.pathname + "?desig1=" + LZString.compressToEncodedURIComponent(desig1.stringify(this));
             },
             copy(text){
                 document.addEventListener("copy", e => {
