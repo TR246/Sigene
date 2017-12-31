@@ -99,13 +99,7 @@
                     </label>
                     <label>
                         <div class="label-text">黒として使う色</div>
-                        <input
-                            type="color"
-                            list="blackColors"
-                            v-model="black">
-                    </label>
-                    <label>
-                        <color-picker value="#006400" :list="numberingColors"></color-picker>
+                        <color-picker v-model="black" :list="[{color: '#1A1A1A', name: '黒'}, {color: '#444444', name: '初期灰色'}]" @change="update"></color-picker>
                     </label>
                 </section>
                 <section>
@@ -176,10 +170,7 @@
                             pattern="^[A-Za-zＡ-Ｚａ-ｚ]{2}\s*(-\s*)?[0-9０-９]{2}$"
                             @input="n.text = formatUppercase($event.target.value)">
                         <div class="invalid-message">アルファベット2文字と数字2桁で入力してください</div>
-                        <input
-                            type="color"
-                            list="numberingColors"
-                            v-model="n.color">
+                        <color-picker v-model="n.color" :list="numberingColors" @change="update"></color-picker>
                         <button @click.prevent="sta.numberings.splice(i, 1) + update()" :disabled="sta.enableTlc && sta.numberings.length <= 1">削除</button>                        
                     </label>
                 </section>

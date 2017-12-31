@@ -871,135 +871,75 @@
             return val;
         }
     };
-    const hsvToRgb = (h, s, v) => {
-        s = s / 100;
-        v = v / 100;
-        const c = v * s;
-        const hp = h / 60;
+    const hsvToRgb = hsv => {
+        let {hue, saturation, brightness} = hsv;
+        saturation = saturation / 100;
+        brightness = brightness / 100;
+        const c = brightness * saturation;
+        const hp = hue / 60;
         const x = c * (1 - Math.abs(hp % 2 - 1));
     
         let r, g, b;
         if(0 <= hp && hp < 1){ [r, g, b] = [c, x, 0] }
-        if(1 <= hp && hp < 2){ [r, g, b] = [x, c, 0] }
-        if(2 <= hp && hp < 3){ [r, g, b] = [0, c, x] }
-        if(3 <= hp && hp < 4){ [r, g, b] = [0, x, c] }
-        if(4 <= hp && hp < 5){ [r, g, b] = [x, 0, c] }
-        if(5 <= hp && hp < 6){ [r, g, b] = [c, 0, x] }
+        else if(hp < 2){ [r, g, b] = [x, c, 0] }
+        else if(hp < 3){ [r, g, b] = [0, c, x] }
+        else if(hp < 4){ [r, g, b] = [0, x, c] }
+        else if(hp < 5){ [r, g, b] = [x, 0, c] }
+        else{ [r, g, b] = [c, 0, x] }
     
-        const m = v - c;
+        const m = brightness - c;
         
         return {
-            r: Math.floor((r + m) * 255),
-            g: Math.floor((g + m) * 255),
-            b: Math.floor((b + m) * 255)
+            red: Math.floor((r + m) * 255),
+            green: Math.floor((g + m) * 255),
+            blue: Math.floor((b + m) * 255)
         }
     };
-    const rgbToHsv = (r, g, b) => {
-        let h, s, v;
-        const max = Math.max(r, g, b);
-        const min = Math.min(r, g, b);
+    const rgbToHsv = rgb => {
+        let {red, green, blue} = rgb;
+        red /= 255;
+        green /= 255;
+        blue /= 255;
 
-        if(max === min){
-            h = 0;
-        }else if(max === r){
-            h = 60 * (g - b) / (max - min) + 0;
-        }else if(max === g){
-            h = (60 * (b - r) / (max - min)) + 120;
-        }else{
-            h = (60 * (r - g) / (max - min)) + 240;
-        }
+        const max = Math.max(red, green, blue);
+        const min = Math.min(red, green, blue);
+        const diff = max - min;
 
-        while(h < 0){
-            h += 360;
-        }
+        let hue = 0;
 
-        s = (max == 0)? 0 : (max - min) / max * 100;
+        switch(min){
+            case max:
+                hue = 0;
+                break;
 
-        v = max / 255 * 100;
+            case red:
+                hue = (60 * ((blue - green) / diff)) + 180;
+                break;
 
-        return {h, s, v};
-    };
-    /*const hslToRgb = (h, s, l) => {
-        let r, g, b;
+            case green:
+                hue = (60 * ((red - blue) / diff)) + 300;
+                break;
 
-        if(s === 0){
-            l = Math.round(l * 255);
-            return {r: l, g: l, b: l};
-        }
-
-        const m2 = (l < 0.5)? l * (1 + s) : l + s - l * s;
-        const m1 = l * 2 - m2;
-        let tmp;
-
-        tmp = h + 120;
-        if(tmp > 360){
-            tmp = tmp - 360;
-        }
-
-        if(tmp < 60){
-            r = (m1 + (m2 - m1) * tmp / 60);
-        }else if(tmp < 180){
-            r = m2;
-        }else if(tmp < 240){
-            r = m1 + (m2 - m1) * (240 - tmp) / 60;
-        }else{
-            r = m1;
-        }
-
-        tmp = h;
-        if(tmp < 60){
-            g = m1 + (m2 - m1) * tmp / 60;
-        }else if(tmp < 180){
-            g = m2;
-        }else if(tmp < 240){
-            g = m1 + (m2 - m1) * (240 - tmp) / 60;
-        }else{
-            g = m1;
-        }
-
-        tmp = h - 120;
-        if(tmp < 0){
-            tmp = tmp + 360;
-        }
-        if(tmp < 60){
-            b = m1 + (m2 - m1) * tmp / 60;
-        }else if(tmp < 180){
-            b = m2;
-        }else if(tmp < 240){
-            b = m1 + (m2 - m1) * (240 - tmp) / 60;
-        }else{
-            b = m1;
+            case blue:
+                hue = (60 * ((green - red) / diff)) + 60;
+                break;
         }
 
         return {
-            r: Math.round(r * 255),
-            g: Math.round(g * 255),
-            b: Math.round(b * 255)
+            hue,
+            saturation: (max === 0 ? 0 : diff / max) * 100,
+            brightness: max * 100
         };
-    };*/
+    };
     const toHex = rgb => "#" + 
-        ("00" + rgb.r.toString(16).toUpperCase()).slice(-2) +
-        ("00" + rgb.g.toString(16).toUpperCase()).slice(-2) +
-        ("00" + rgb.b.toString(16).toUpperCase()).slice(-2);
-    const hexToRgb = hex => {
-        if(hex[0] === "#"){
-            hex = hex.slice(1);
-        }
-        if(hex.length === 3){
-            hex = hex.split("").map(v => v + v).join("");
-        }
-        if(hex.length !== 6) return {r: 0, g: 0, b: 0};
-        return {
-            r:  parseInt(hex.substr(0, 2), 16),
-            g:  parseInt(hex.substr(2, 2), 16),
-            b:  parseInt(hex.substr(4, 2), 16)
-        }
-    }
+        ("00" + rgb.red.toString(16)).slice(-2) +
+        ("00" + rgb.green.toString(16)).slice(-2) +
+        ("00" + rgb.blue.toString(16)).slice(-2);
     const createDragFunction = (direction, ref, fn) => {
         const moveX = direction.indexOf("x") !== -1;
         const moveY = direction.indexOf("y") !== -1;
         return function(e){
-            this.animation = false;
+            this.isMousedown = true;
 
             const rect = this.$refs[ref].getBoundingClientRect();
             const startX = rect.left + window.pageXOffset;
@@ -1007,29 +947,23 @@
 
             const mousemove = e => {
                 const pos = {};
-                if(moveX) pos.x = Math.min(Math.max((e.type === "touchmove"? e.changedTouches[0] : e).pageX - startX, 0), rect.width);
-                if(moveY) pos.y = Math.min(Math.max((e.type === "touchmove"? e.changedTouches[0] : e).pageY - startY, 0), rect.height);
+                if(moveX) pos.x = Math.min(Math.max(e.pageX - startX, 0), rect.width);
+                if(moveY) pos.y = Math.min(Math.max(e.pageY - startY, 0), rect.height);
                 fn.call(this, pos, rect);
             };
             mousemove(e);
             document.addEventListener("mousemove", mousemove);
-            document.addEventListener("touchmove", mousemove);
 
             document.addEventListener("mouseup", () => {
-                this.animation = true;
+                this.isMousedown = false;
                 document.removeEventListener("mousemove", mousemove);
-            }, {once: true});
-
-            document.addEventListener("touchend", () => {
-                this.animation = true;
-                document.removeEventListener("touchmove", mousemove);
             }, {once: true});
         };
     };
     Vue.component("color-picker", {
         template: `<div
             :class="{'color-picker': true, open: isOpened}"
-            :style="{'background-color': beforeValue}"
+            :style="{'background-color': currentColorInHex}"
             @click.self="open">
                 <div class="color-picker-back" @click="close"></div>
                 <div class="color-picker-body">
@@ -1041,44 +975,48 @@
                     </ul>
                     <div class="color-picker-sv">
                         <div class="color-picker-s" ref="saturation">
-                            <div :class="{'color-picker-s-thumb': true, 'color-picker-animation': isOpened && animation}" :style="{transform: 'translateX(' + domS + 'px)'}" @mousedown="satuMousedown($event)" @touchstart="satuMousedown($event)"></div>
+                            <div :class="{'color-picker-s-thumb': true, 'color-picker-animation': !isMousedown}" :style="{transform: 'translateX(' + domS + 'px)'}" @mousedown="satuMousedown($event)"></div>
                         </div>
                         <div class="color-picker-v" ref="brightness">
-                            <div :class="{'color-picker-v-thumb': true, 'color-picker-animation': isOpened && animation}" :style="{transform: 'translateY(' + domV + 'px)'}" @mousedown="valMousedown($event)" @touchstart="valMousedown($event)"></div>
+                            <div :class="{'color-picker-v-thumb': true, 'color-picker-animation': !isMousedown}" :style="{transform: 'translateY(' + domV + 'px)'}" @mousedown="valMousedown($event)"></div>
                         </div>
-                        <div :class="{'color-picker-sv-main': true, 'color-picker-animation': isOpened && animation}" ref="svMain" :style="{'background-color': hueInHex}" @mousedown="svMousedown($event)" @touchstart="svMousedown($event)">
-                            <div :class="{'color-picker-saturation-line': true, 'color-picker-animation': isOpened && animation}" :style="{transform: 'translateX(' + domS + 'px)'}"></div>
-                            <div :class="{'color-picker-brightness-line': true, 'color-picker-animation': isOpened && animation}" :style="{transform: 'translateY(' + domV + 'px)'}"></div>
-                            <div :class="{'color-picker-sv-point': true, 'color-picker-animation': isOpened && animation}" :style="{transform: 'translate('+(domS - 10)+'px, '+(domV + 10)+'px)', 'background-color': currentColorInHex}"></div>
+                        <div :class="{'color-picker-sv-main': true, 'color-picker-animation': !isMousedown}" ref="svMain" :style="{'background-color': hueInHex}" @mousedown="svMousedown($event)">
+                            <div :class="{'color-picker-saturation-line': true, 'color-picker-animation': !isMousedown}" :style="{transform: 'translateX(' + domS + 'px)'}"></div>
+                            <div :class="{'color-picker-brightness-line': true, 'color-picker-animation': !isMousedown}" :style="{transform: 'translateY(' + domV + 'px)'}"></div>
+                            <div :class="{'color-picker-sv-point': true, 'color-picker-animation': !isMousedown}" :style="{transform: 'translate('+(domS - 10)+'px, '+(domV + 10)+'px)', 'background-color': currentColorInHex}"></div>
                         </div>
                     </div>
-                    <div class="color-picker-h" @mousedown="hueMousedown($event)" @touchstart="hueMousedown($event)">
+                    <div class="color-picker-h" @mousedown="hueMousedown($event)">
                         <img src="${HUE_IMAGE_DATAURL}" ref="hueImage">
-                        <div :class="{'color-picker-h-thumb': true, 'color-picker-animation': isOpened && animation}" :style="{transform: 'translateY(' + domH + 'px)', 'background-color': hueInHex}"></div>
+                        <div :class="{'color-picker-h-thumb': true, 'color-picker-animation': !isMousedown}" :style="{transform: 'translateY(' + domH + 'px)', 'background-color': hueInHex}"></div>
                     </div>
                     <ul class="color-picker-tabs">
-                        <li v-for="(label, i) in tabLabels" :class="{selected: selectedTab === i}" @click="selectedTab = i">{{label}}</li>
+                        <li v-for="(item, i) in tabItems" :class="{selected: selectedTab === i}" @click="selectedTab = i">{{item.label}}</li>
                     </ul>
-                    <div :class="{'color-picker-tab-content': true, selected: selectedTab === 0}" @input="setColorByRGB(rgb)">
-                        <label><span>R(赤成分):</span><input type="number" v-model.number="rgb.r" min="0" max="255"></label>
-                        <label><span>G(緑成分):</span><input type="number" v-model.number="rgb.g" min="0" max="255"></label>
-                        <label><span>B(青成分):</span><input type="number" v-model.number="rgb.b" min="0" max="255"></label>
+                    <div class="color-picker-tab-content" :class="{selected: selectedTab === 0}">
+                        <label><span>R(赤成分):</span><input type="number" v-model="red" @input="updateHsv" min="0" max="255"></label>
+                        <label><span>G(赤成分):</span><input type="number" v-model="green" @input="updateHsv" min="0" max="255"></label>
+                        <label><span>B(赤成分):</span><input type="number" v-model="blue" @input="updateHsv" min="0" max="255"></label>
                     </div>
-                    <div :class="{'color-picker-tab-content': true, selected: selectedTab === 1}" @input="updateRGB() + updateDOMHSV()">
-                        <label><span>H(色相):</span><input type="number" v-model.number="hsv.h" min="0" max="360"></label>
-                        <label><span>S(彩度):</span><input type="number" v-model.number="hsv.s" min="0" max="100"></label>
-                        <label><span>V(明度):</span><input type="number" v-model.number="hsv.v" min="0" max="100"></label>
+                    <div class="color-picker-tab-content" :class="{selected: selectedTab === 1}">
+                        <label><span>H(色相):</span><input type="number" value="0" min="0" max="360"></label>
+                        <label><span>S(彩度):</span><input type="number" value="0" min="0" max="100">%</label>
+                        <label><span>V(明度):</span><input type="number" value="0" min="0" max="100">%</label>
                     </div>
-                    <div :class="{'color-picker-tab-content': true, selected: selectedTab === 2}">
-                        <label><span>16進カラーコード:</span><input type="text" :value="currentColorInHex" @change="setColorByHex($event.target.value)" min="0" max="360"></label>
+                    <div class="color-picker-tab-content" :class="{selected: selectedTab === 2}">
+                        <label><span>H(色相):</span><input type="number" value="0" min="0" max="360"></label>
+                        <label><span>S(彩度):</span><input type="number" value="0" min="0" max="100">%</label>
+                        <label><span>L(輝度):</span><input type="number" value="0" min="0" max="100">%</label>
+                    </div>
+                    <div class="color-picker-tab-content" :class="{selected: selectedTab === 3}">
+                        <label><span>16進カラーコード</span><input type="text" v-model="currentColorInHex"></label>
                     </div>
                     <div class="color-picker-buttons">
                         <div class="color-picker-preview">
-                            <div>色プレビュー</div>
-                            <div :class="{'color-picker-preview-color': true, 'color-picker-animation': isOpened && animation}" :style="{'background-color': currentColorInHex}"></div>
+                            <div :style="{'background-color': currentColorInHex}">色プレビュー</div>
                         </div>
-                        <button @click.prevent="cancel">キャンセル</button>
-                        <button @click.prevent="ok">決定</button>
+                        <button @click.prevent="">キャンセル</button>
+                        <button @click.prevent="">決定</button>
                     </div>
                 </div>
             </div>`,
@@ -1089,46 +1027,62 @@
             },
             list: Array
         },
-        model: {
-            prop: "value",
-            event: "change"
-        },
         mounted(){
-            this.beforeValue = this.value || "#000000";
+            this.open();
         },
         data(){
             return {
                 isOpened: false,
-                animation: true,
+                isMousedown: false,
                 domH: 0,
                 domS: 0,
                 domV: 0,
-                rgb: {
-                    r: 0,
-                    g: 0,
-                    b: 0
-                },
-                hsv: {
-                    h: 0,
-                    s: 0,
-                    v: 0,
-                },
-                tabLabels: ["RGB", "HSV", "Hex"],
-                selectedTab: 0,
-                beforeValue: "",
+                red: 0,
+                green: 0,
+                blue: 0,
+                hue: 0,
+                saturation: 0,
+                brightness: 0,
+                tabItems: [
+                    {label: "RGB"},
+                    {label: "HSV"},
+                    {label: "HSL"},
+                    {label: "HEX"}
+                ],
+                selectedTab: 0
             };
         },
         computed: {
-            currentColorInHex(){
-                return toHex(hsvToRgb(this.hsv.h, this.hsv.s, this.hsv.v));
-            },
             hueInHex(){
-                return toHex(hsvToRgb(this.hsv.h, 100, 100));
-            }
+                return toHex(hsvToRgb({hue: this.hue, saturation: 100, brightness: 100}));
+            },
+            currentColorInHex(){
+                const {red, green, blue} = this;
+                return toHex({red, green, blue});
+            },
+            hsv: {
+                get(){
+                    const {red, green, blue} = this;
+                    const hsv = rgbToHsv({red, green, blue});
+                    return hsv;
+                },
+                set(hsv){
+                    const {hue: hue0, saturation: saturation0, brightness: brightness0} = this;
+                    const hue = hsv.hue || hue0;
+                    const saturation = hsv.saturation || saturation0;
+                    const brightness = hsv.brightness || brightness0;
+                    const {red, green, blue} = hsvToRgb({hue, saturation, brightness});
+                    this.hue = hue;
+                    this.saturation = saturation;
+                    this.brightness = brightness;
+                    this.red = red;
+                    this.green = green;
+                    this.blue = blue;
+                }
+            },
         },
         methods: {
             open(){
-                this.setColorByRGB(hexToRgb(this.beforeValue));
                 this.isOpened = true;
                 document.body.classList.add("scroll-stop");
             },
@@ -1136,60 +1090,41 @@
                 this.isOpened = false;
                 document.body.classList.remove("scroll-stop");
             },
-            cancel(){
-                this.close();
-            },
-            ok(){
-                this.$emit("change", this.currentColorInHex);
-                this.beforeValue = this.currentColorInHex;
-                this.close();
-            },
-            updateRGB(){
-                this.rgb = hsvToRgb(this.hsv.h, this.hsv.s, this.hsv.v);
-            },
-            updateDOMHSV(){
-                this.domH = this.hsv.h / 360 * this.$refs.hueImage.getBoundingClientRect().height;
-                this.domS = this.hsv.s / 100 * this.$refs.saturation.getBoundingClientRect().width;
-                this.domV = -this.hsv.v / 100 * this.$refs.brightness.getBoundingClientRect().height;
-            },
-            setColorByRGB(rgb){
-                const {r, g, b} = rgb;
-                const hsv = rgbToHsv(r, g, b);
-                this.hsv = {
-                    h: Math.round(hsv.h),
-                    s: Math.round(hsv.s),
-                    v: Math.round(hsv.v)
-                };
-                this.rgb = {r, g, b};
-                this.domH = hsv.h / 360 * this.$refs.hueImage.getBoundingClientRect().height;
-                this.domS = hsv.s / 100 * this.$refs.saturation.getBoundingClientRect().width;
-                this.domV = -hsv.v / 100 * this.$refs.brightness.getBoundingClientRect().height;
-            },
             setColorByHex(hex){
-                this.setColorByRGB(hexToRgb(hex));
+                const red = parseInt(hex.substr(1, 2), 16);
+                const green = parseInt(hex.substr(3, 2), 16);
+                const blue = parseInt(hex.substr(5, 2), 16);
+
+                const hsv = rgbToHsv({red, green, blue});
+
+                this.hsv = hsv;
+                this.domH = hsv.hue / 360 * this.$refs.hueImage.getBoundingClientRect().height;
+                this.domS = hsv.saturation / 100 * this.$refs.saturation.getBoundingClientRect().width;
+                this.domV = -hsv.brightness / 100 * this.$refs.brightness.getBoundingClientRect().height;
+            },
+            updateHsv(){
+                this.hsv = rgbToHsv(this);
             },
             satuMousedown: createDragFunction("x", "saturation", function(pos, rect){
-                this.hsv.s = Math.round(pos.x / rect.width * 100);
+                this.hsv = {saturation: pos.x / rect.width * 100};
                 this.domS = pos.x;
-                this.updateRGB();
             }),
             valMousedown: createDragFunction("y", "brightness", function(pos, rect){
-                this.hsv.v = Math.round(100 - pos.y / rect.height * 100);
+                this.hsv = {brightness: 100 - pos.y / rect.height * 100};
                 this.domV = pos.y - rect.height;
-                this.updateRGB();
             }),
             hueMousedown: createDragFunction("y", "hueImage", function(pos, rect){
-                const h = pos.y / rect.height * 360;
-                this.hsv.h = Math.round(h);
+                const hue = pos.y / rect.height * 360;
+                this.hsv = {hue};
                 this.domH = pos.y;
-                this.updateRGB();
             }),
             svMousedown: createDragFunction("xy", "svMain", function(pos, rect){
-                this.hsv.s = Math.round(pos.x / rect.width * 100);
+                this.hsv = {
+                    saturation: pos.x / rect.width * 100,
+                    brightness: 100 - pos.y / rect.height * 100
+                };
                 this.domS = pos.x;
-                this.hsv.v = Math.round(100 - pos.y / rect.height * 100);
                 this.domV = pos.y - rect.height;
-                this.updateRGB();
             })
         }
     });

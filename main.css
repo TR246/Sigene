@@ -123,7 +123,7 @@ input[type="radio"] {
     display: none;
 }
 .color-picker {
-    margin: 1px;
+    margin: 5px;
     width: 58px;
     height: 18px;
     position: relative;
@@ -185,13 +185,13 @@ input[type="radio"] {
     visibility: hidden;
     opacity: 0;
     display: grid;
-    grid-template-columns: 1fr 1fr 50px;
-    grid-template-rows: 1fr 30px 50px 30px;
+    grid-template-columns: 1fr 2fr 50px;
+    grid-template-rows: 1fr 30px 50px 50px;
     grid-template-areas: 
-        "list sv     h     "
-        "list tabs   tabs  "
-        "list input  input "
-        "list others others";
+        "list sv      h      "
+        "list tabs    tabs   "
+        "list input   input  "
+        "list buttons buttons";
     transition: 225ms;
 }
 .open .color-picker-body {
@@ -204,6 +204,7 @@ input[type="radio"] {
     overflow: auto;
     list-style: none;
     grid-area: list;
+    border-right: 1px solid #9E9E9E;
 }
 .color-picker-list li {
     margin: 5px 0;
@@ -273,6 +274,7 @@ input[type="radio"] {
     border: 2px solid #9E9E9E;
     border-radius: 50%;
     cursor: pointer;
+    box-shadow: 0 0 0 1px #212121;
 }
 .color-picker-s {
     grid-column: 1 / 2;
@@ -342,6 +344,72 @@ input[type="radio"] {
     border: 1px solid #9E9E9E;
     box-shadow: 0 0 0 2px #FAFAFA;
     cursor: pointer;
+}
+.color-picker-tabs {
+    grid-area: tabs;
+    list-style: none;
+    display: flex;
+}
+.color-picker-tabs li {
+    width: 100%;
+    flex: 1;
+    line-height: 30px;
+    text-align: center;
+    cursor: pointer;
+    background-color: #9E9E9E;
+    transition: 225ms;
+}
+.color-picker-tabs li.selected {
+    background-color: #212121;
+    color: #FFF;
+}
+.color-picker-tab-content {
+    grid-area: input;
+    display: none;
+    background-color: #212121;
+    color: #FFF;
+}
+.color-picker-tab-content.selected {
+    display: flex;
+}
+.color-picker-tab-content label {
+    width: 100%;
+    padding: 0 5px;
+    flex: 1;
+    display: flex;
+    white-space: nowrap;
+}
+.color-picker-tab-content label span {
+    display: block;
+    padding-right: 5px;
+}
+.color-picker-tab-content label input {
+    width: 100%;
+    min-width: 50px;
+    flex: 1;
+}
+.color-picker-buttons {
+    grid-area: buttons;
+    display: flex;
+}
+.color-picker-preview {
+    width: 100%;
+    flex: 1;
+    padding: 10px;
+    display: flex;
+}
+.color-picker-preview-color {
+    width: 100%;
+    flex: 1;
+    height: 100%;
+    margin-left: 10px;
+    border: 1px solid #FAFAFA;
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px #9E9E9E;
+    line-height: 30px;
+}
+.color-picker-buttons button {
+    display: block;
 }
 .color-picker-animation {
     transition: 225ms;
@@ -468,13 +536,16 @@ input[type="radio"] {
 @media screen and (max-width: 800px){
     .color-picker-body {
         grid-template-columns: 1fr 50px;
-        grid-template-rows: 1fr 2fr 30px 50px 30px;
+        grid-template-rows: 1fr 2fr 30px 100px 50px;
         grid-template-areas: 
-            "list   list"
-            "sv     h     "
-            "tabs   tabs  "
-            "input  input "
-            "others others";
+            "list    list    "
+            "sv      h       "
+            "tabs    tabs    "
+            "input   input   "
+            "buttons buttons";
+    }
+    .color-picker-tab-content.selected {
+        flex-wrap: wrap;
     }
     .ex-input {
         width: 100vw;
