@@ -86,7 +86,7 @@
     });
 
     //離脱確認
-    window.addEventListener("beforeunload", e => e.returnValue = "このページから離れてもよろしいですか");
+    //window.addEventListener("beforeunload", e => e.returnValue = "このページから離れてもよろしいですか");
 
     //専用フォーマット
     const desig1 = {
@@ -861,12 +861,54 @@
     }
 
     //Vue
-    /*const replaceProperty = (obj, key, replacer) => {
-        const keys = key.split(".");
-        const last = keys.pop();
-        const sObj = keys.reduce((obj, key) => obj[key.trim()], obj);
-        sObj[last] = replacer(sObj[last]);
-    };*/
+    /*
+    <div class="color-picker-search">
+        <input type="text" placeholder="色を検索" v-model="searchVal">
+        <div class="color-picker-search-clear" title="クリア" @click="searchVal = ''"></div>
+    </div>
+    */
+    Vue.component("color-picker", {
+        template: `<div
+            :class="{'color-picker': true, open: isOpened}"
+            :style="{'background-color': value}"
+            @click.self="open">
+                <div class="color-picker-back" @click="close"></div>
+                <div class="color-picker-body">
+                    <ul class="color-picker-list" v-if="list && list.length">
+                        <li v-for="c in list" :title="c.name">
+                            <div class="color-picker-list-color" :style="{'background-color': c.color}"></div>
+                            <div class="color-picker-list-name">{{c.name}}</div>
+                        </li>
+                    </ul>
+                    <ul class="color-picker-tabs">
+                        <>
+                    </ul>
+                </div>
+            </div>`,
+        props: {
+            value: {
+                default: "#000000",
+                validator: val => /^#[0-9A-Fa-f]{6}$/.test(val)
+            },
+            list: Array
+        },
+        data(){
+            return {
+                isOpened: false,
+                searchVal: ""
+            };
+        },
+        methods: {
+            open(){
+                this.isOpened = true;
+                document.body.classList.add("scroll-stop");
+            },
+            close(){
+                this.isOpened = false;
+                document.body.classList.remove("scroll-stop");
+            }
+        }
+    });
     const vm = new Vue({
         el: "#vm",
         mounted(){
@@ -885,9 +927,6 @@
             }
 
             this.update();
-            /*this.loadFont('japanese');
-            this.loadFont('chinese');
-            this.loadFont('korean');*/
         },
         data: () => Object.assign(defaultData(), {
             macrons: ["Ā", "Ē", "Ī", "Ō", "Ū", "ā", "ē", "ī", "ō", "ū"],
@@ -896,7 +935,25 @@
                 chinese: false,
                 korean: false
             },
-            shareURL: ""
+            shareURL: "",
+            numberingColors: [
+                {color: "#F0862B", name: "東海道線"},
+                {color: "#1069B4", name: "横須賀・総武快速線"},
+                {color: "#1DAED1", name: "京浜東北・根岸線"},
+                {color: "#B3CC36", name: "山手線"},
+                {color: "#DD6935", name: "中央線快速・青梅線・五日市線"},
+                {color: "#F2D01F", name: "中央・総武線各駅停車"},
+                {color: "#F18E41", name: "宇都宮線・高崎線"},
+                {color: "#14A676", name: "埼京線"},
+                {color: "#1DAF7E", name: "常磐線快速"},
+                {color: "#868587", name: "常磐線各駅停車"},
+                {color: "#D01827", name: "京葉線"},
+                {color: "#DB2027", name: "湘南新宿ライン"},
+                {color: "#B1CB39", name: "横浜線"},
+                {color: "#F2D01F", name: "南武線"},
+                {color: "#F2D01F", name: "鶴見線"},
+                {color: "#EB5A28", name: "武蔵野線"}
+            ]
         }),
         computed: {
             enableBoardLight(){
