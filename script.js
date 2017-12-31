@@ -1032,7 +1032,7 @@
             :style="{'background-color': beforeValue}"
             @click.self="open">
                 <div class="color-picker-back" @click="close"></div>
-                <div class="color-picker-body">
+                <div :class="{'color-picker-body': true, 'color-picker-has-list': list && list.length}">
                     <ul class="color-picker-list" v-if="list && list.length">
                         <li v-for="c in list" :title="c.name" @click="setColorByHex(c.color)">
                             <div class="color-picker-list-color" :style="{'background-color': c.color}"></div>
@@ -1084,8 +1084,7 @@
             </div>`,
         props: {
             value: {
-                default: "#000000",
-                validator: val => /^#[0-9A-Fa-f]{6}$/.test(val)
+                default: "#000000"
             },
             list: Array
         },
@@ -1237,6 +1236,32 @@
                 {color: "#F2D01F", name: "南武線"},
                 {color: "#F2D01F", name: "鶴見線"},
                 {color: "#EB5A28", name: "武蔵野線"}
+            ],
+            routeColors: [
+                {color: "#80C241", name: "山手線"},
+                {color: "#00B48D", name: "埼京線・川越線"},
+                {color: "#00B2E5", name: "京浜東北・根岸線"},
+                {color: "#F15A22", name: "中央線快速・青梅線・五日市線"},
+                {color: "#FFD400", name: "中央総武線各駅停車"},
+                {color: "#00B261", name: "常磐線・成田線"},
+                {color: "#C9242F", name: "京葉線"},
+                {color: "#F15A22", name: "武蔵野線"},
+                {color: "#FFD400", name: "南武線"},
+                {color: "#FFD400", name: "鶴見線"},
+                {color: "#80C241", name: "横浜線"},
+                {color: "#009793", name: "相模線"},
+                {color: "#A8A39D", name: "八高線・川越線"},
+                {color: "#F68B1E", name: "東海道線・伊東線・宇都宮線・高崎線"},
+                {color: "#007AC0", name: "横須賀・総武快速線"},
+                {color: "#007AC0", name: "常磐線"},
+                {color: "#00B9F1", name: "内房線"},
+                {color: "#DB4028", name: "外房線"},
+                {color: "#FFC20D", name: "総武本線"},
+                {color: "#00B261", name: "成田線"},
+                {color: "#F15A22", name: "東金線"},
+                {color: "#C56E2E", name: "鹿島線"},
+                {color: "#880022", name: "日光線"},
+                {color: "#339966", name: "烏山線"}
             ]
         }),
         computed: {

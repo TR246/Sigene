@@ -185,6 +185,16 @@ input[type="radio"] {
     visibility: hidden;
     opacity: 0;
     display: grid;
+    grid-template-columns: 2fr 50px;
+    grid-template-rows: 1fr 30px 50px 50px;
+    grid-template-areas: 
+        "sv      h      "
+        "tabs    tabs   "
+        "input   input  "
+        "buttons buttons";
+    transition: 225ms;
+}
+.color-picker-has-list {
     grid-template-columns: 1fr 2fr 50px;
     grid-template-rows: 1fr 30px 50px 50px;
     grid-template-areas: 
@@ -192,7 +202,6 @@ input[type="radio"] {
         "list tabs    tabs   "
         "list input   input  "
         "list buttons buttons";
-    transition: 225ms;
 }
 .open .color-picker-body {
     visibility: visible;
@@ -536,6 +545,15 @@ input[type="radio"] {
 @media screen and (max-width: 800px){
     .color-picker-body {
         grid-template-columns: 1fr 50px;
+        grid-template-rows: 2fr 30px 100px 50px;
+        grid-template-areas: 
+            "sv      h       "
+            "tabs    tabs    "
+            "input   input   "
+            "buttons buttons";
+    }
+    .color-picker-has-list {
+        grid-template-columns: 1fr 50px;
         grid-template-rows: 1fr 2fr 30px 100px 50px;
         grid-template-areas: 
             "list    list    "
@@ -543,7 +561,7 @@ input[type="radio"] {
             "tabs    tabs    "
             "input   input   "
             "buttons buttons";
-    }
+        }
     .color-picker-tab-content.selected {
         flex-wrap: wrap;
     }
