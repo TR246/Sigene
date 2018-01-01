@@ -179,29 +179,15 @@ input[type="radio"] {
     margin: auto;
     z-index: 9999;
     width: 70vw;
+    min-width: 300px;
     height: 70vh;
+    min-height: 500px;
     background-color: #FAFAFA;
     border-radius: 2px;
     visibility: hidden;
     opacity: 0;
-    display: grid;
-    grid-template-columns: 2fr 50px;
-    grid-template-rows: 1fr 30px 50px 50px;
-    grid-template-areas: 
-        "sv      h      "
-        "tabs    tabs   "
-        "input   input  "
-        "buttons buttons";
+    display: flex;
     transition: 225ms;
-}
-.color-picker-has-list {
-    grid-template-columns: 1fr 2fr 50px;
-    grid-template-rows: 1fr 30px 50px 50px;
-    grid-template-areas: 
-        "list sv      h      "
-        "list tabs    tabs   "
-        "list input   input  "
-        "list buttons buttons";
 }
 .open .color-picker-body {
     visibility: visible;
@@ -212,7 +198,7 @@ input[type="radio"] {
     padding: 0 5px;
     overflow: auto;
     list-style: none;
-    grid-area: list;
+    width: 30%;
     border-right: 1px solid #9E9E9E;
 }
 .color-picker-list li {
@@ -243,8 +229,13 @@ input[type="radio"] {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.color-picker-main {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
 .color-picker-sv {
-    grid-area: sv;
     display: grid;
     padding: 15px;
     grid-template-columns: 1fr 40px;
@@ -383,19 +374,15 @@ input[type="radio"] {
 }
 .color-picker-tab-content label {
     width: 100%;
-    padding: 0 5px;
     flex: 1;
-    display: flex;
-    white-space: nowrap;
+    margin: 5px;
 }
 .color-picker-tab-content label span {
-    display: block;
+    display: inline-block;
     padding-right: 5px;
 }
 .color-picker-tab-content label input {
-    width: 100%;
     min-width: 50px;
-    flex: 1;
 }
 .color-picker-buttons {
     grid-area: buttons;

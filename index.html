@@ -44,17 +44,17 @@
                     <button @click.prevent="loadFont('korean')" :disabled="fontLoad.korean">韓国語フォントをロードする(約1MB ～ 約2.1MB)</button>
                 </section>
             </section>
-            <section class="row">
+            <!--<section class="row">
                 <section>
                     <h2>駅名標タイプ</h2>
                     <label>
                         <div class="label-text">タイプ</div>
-                        <select v-model="signType"> <!--カンマは使用不可-->
+                        <select v-model="signType"> カンマは使用不可
                             <option value="jre-kanji">JR東日本 漢字主体</option>
                         </select>
                     </label>
                 </section>
-            </section>
+            </section>-->
             <section v-if="signType === 'jre-kanji'" class="row">
                 <section>
                     <h2>駅名標設定</h2>
@@ -99,7 +99,7 @@
                     </label>
                     <label>
                         <div class="label-text">黒として使う色</div>
-                        <color-picker v-model="black" :list="[{color: '#1A1A1A', name: '黒'}, {color: '#444444', name: '初期灰色'}]" @change="update"></color-picker>
+                        <input type="color" v-model="black" list="blackList">
                     </label>
                 </section>
                 <section>
@@ -170,7 +170,7 @@
                             pattern="^[A-Za-zＡ-Ｚａ-ｚ]{2}\s*(-\s*)?[0-9０-９]{2}$"
                             @input="n.text = formatUppercase($event.target.value)">
                         <div class="invalid-message">アルファベット2文字と数字2桁で入力してください</div>
-                        <color-picker v-model="n.color" :list="numberingColors" @change="update"></color-picker>
+                        <input type="color" v-model="n.color" list="numberingColorList">
                         <button @click.prevent="sta.numberings.splice(i, 1) + update()" :disabled="sta.enableTlc && sta.numberings.length <= 1">削除</button>                        
                     </label>
                 </section>
@@ -193,7 +193,7 @@
                     </label>
                     <label>
                         <div class="label-text">この方面への帯の色</div>
-                        <color-picker v-model="leftStations[0].lineColor" @change="update"></color-picker>
+                        <input type="color" v-model="leftStations[0]">
                     </label>
                     <label>
                         <input
@@ -216,7 +216,7 @@
                                 <div class="invalid-message">アルファベット2文字と数字2桁で入力してください</div>
                             </label>
                             <label class="inline">
-                                <color-picker v-model="n.color" :list="numberingColors" @change="update"></color-picker>
+                                <input type="color" v-model="n.color" list="numberingColorList">
                             </label>
                             <button @click.prevent="leftStations[0].numberings.splice(i, 1) + update()">削除</button>
                         </div>
@@ -241,7 +241,7 @@
                     </label>
                     <label>
                         <div class="label-text">この方面への帯の色</div>
-                        <color-picker v-model="leftStations[1].lineColor" @change="update"></color-picker>
+                        <input type="color" v-model="leftStations[1]">
                     </label>
                     <label>
                         <input
@@ -264,7 +264,7 @@
                                 <div class="invalid-message">アルファベット2文字と数字2桁で入力してください</div>
                             </label>
                             <label class="inline">
-                                <color-picker v-model="n.color" :list="numberingColors" @change="update"></color-picker>
+                                <input type="color" v-model="n.color" list="numberingColorList">
                             </label>
                             <button @click.prevent="leftStations[1].numberings.splice(i, 1) + update()">削除</button>
                         </div>
@@ -289,7 +289,7 @@
                     </label>
                     <label>
                         <div class="label-text">この方面への帯の色</div>
-                        <color-picker v-model="rightStations[0].lineColor" @change="update"></color-picker>
+                        <input type="color" v-model="rightStations[0]">
                     </label>
                     <label>
                         <input
@@ -312,7 +312,7 @@
                                 <div class="invalid-message">アルファベット2文字と数字2桁で入力してください</div>
                             </label>
                             <label class="inline">
-                                <color-picker v-model="n.color" :list="numberingColors" @change="update"></color-picker>
+                                <input type="color" v-model="n.color" list="numberingColorList">
                             </label>
                             <button @click.prevent="rightStations[0].numberings.splice(i, 1) + update()">削除</button>
                         </div>
@@ -337,7 +337,7 @@
                     </label>
                     <label>
                         <div class="label-text">この方面への帯の色</div>
-                        <color-picker v-model="rightStations[1].lineColor" @change="update"></color-picker>
+                        <input type="color" v-model="rightStations[1]">
                     </label>
                     <label>
                         <input
@@ -360,7 +360,7 @@
                                 <div class="invalid-message">アルファベット2文字と数字2桁で入力してください</div>
                             </label>
                             <label class="inline">
-                                <color-picker v-model="n.color" :list="numberingColors" @change="update"></color-picker>
+                                <input type="color" v-model="n.color" list="numberingColorList">
                             </label>
                             <button @click.prevent="rightStations[1].numberings.splice(i, 1) + update()">削除</button>
                         </div>
@@ -398,7 +398,7 @@
                         <div>
                             <label class="inline">
                                 <div class="label-text">色</div>
-                                <color-picker v-model="routeColors[i]" :list="routeColorList" @change="update"></color-picker>
+                                <input type="color" v-model="routeColors[i]" list="routeColorList">
                             </label>
                             <button @click.prevent="routeColors.splice(i, 1) + update()">削除</button>
                         </div>
@@ -406,6 +406,56 @@
                 </section>
             </section>
         </form>
+
+        <datalist id="blackList">
+            <option value="#1A1A1A"></option>
+            <option value="#333333"></option>
+        </datalist>
+        <datalist id="numberingColorList">
+            <option value="#F0862B"></option>
+            <option value="#1069B4"></option>
+            <option value="#1DAED1"></option>
+            <option value="#B3CC36"></option>
+            <option value="#DD6935"></option>
+            <option value="#F2D01F"></option>
+            <option value="#F18E41"></option>
+            <option value="#14A676"></option>
+            <option value="#1DAF7E"></option>
+            <option value="#868587"></option>
+            <option value="#D01827"></option>
+            <option value="#DB2027"></option>
+            <option value="#B1CB39"></option>
+            <option value="#F2D01F"></option>
+            <option value="#F2D01F"></option>
+            <option value="#EB5A28"></option>
+        </datalist>
+        <datalist id="routeColorList">
+            <option value="#80C241"></option>
+            <option value="#00B48D"></option>
+            <option value="#00B2E5"></option>
+            <option value="#F15A22"></option>
+            <option value="#FFD400"></option>
+            <option value="#00B261"></option>
+            <option value="#C9242F"></option>
+            <option value="#F15A22"></option>
+            <option value="#FFD400"></option>
+            <option value="#FFD400"></option>
+            <option value="#80C241"></option>
+            <option value="#009793"></option>
+            <option value="#A8A39D"></option>
+            <option value="#F68B1E"></option>
+            <option value="#007AC0"></option>
+            <option value="#007AC0"></option>
+            <option value="#00B9F1"></option>
+            <option value="#DB4028"></option>
+            <option value="#FFC20D"></option>
+            <option value="#00B261"></option>
+            <option value="#F15A22"></option>
+            <option value="#C56E2E"></option>
+            <option value="#880022"></option>
+            <option value="#339966"></option>
+        </datalist>
+
         <script src="https://unpkg.com/vue" defer></script>
         <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js" defer></script>

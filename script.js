@@ -86,7 +86,7 @@
     });
 
     //離脱確認
-    //window.addEventListener("beforeunload", e => e.returnValue = "このページから離れてもよろしいですか");
+    window.addEventListener("beforeunload", e => e.returnValue = "このページから離れてもよろしいですか");
 
     //専用フォーマット
     const desig1 = {
@@ -1039,46 +1039,48 @@
                             <div class="color-picker-list-name">{{c.name}}</div>
                         </li>
                     </ul>
-                    <div class="color-picker-sv">
-                        <div class="color-picker-s" ref="saturation">
-                            <div :class="{'color-picker-s-thumb': true, 'color-picker-animation': isOpened && animation}" :style="{transform: 'translateX(' + domS + 'px)'}" @mousedown="satuMousedown($event)" @touchstart="satuMousedown($event)"></div>
+                    <div class="color-picker-main">
+                        <div class="color-picker-sv">
+                            <div class="color-picker-s" ref="saturation">
+                                <div :class="{'color-picker-s-thumb': true, 'color-picker-animation': isOpened && animation}" :style="{transform: 'translateX(' + domS + 'px)'}" @mousedown="satuMousedown($event)" @touchstart="satuMousedown($event)"></div>
+                            </div>
+                            <div class="color-picker-v" ref="brightness">
+                                <div :class="{'color-picker-v-thumb': true, 'color-picker-animation': isOpened && animation}" :style="{transform: 'translateY(' + domV + 'px)'}" @mousedown="valMousedown($event)" @touchstart="valMousedown($event)"></div>
+                            </div>
+                            <div :class="{'color-picker-sv-main': true, 'color-picker-animation': isOpened && animation}" ref="svMain" :style="{'background-color': hueInHex}" @mousedown="svMousedown($event)" @touchstart="svMousedown($event)">
+                                <div :class="{'color-picker-saturation-line': true, 'color-picker-animation': isOpened && animation}" :style="{transform: 'translateX(' + domS + 'px)'}"></div>
+                                <div :class="{'color-picker-brightness-line': true, 'color-picker-animation': isOpened && animation}" :style="{transform: 'translateY(' + domV + 'px)'}"></div>
+                                <div :class="{'color-picker-sv-point': true, 'color-picker-animation': isOpened && animation}" :style="{transform: 'translate('+(domS - 10)+'px, '+(domV + 10)+'px)', 'background-color': currentColorInHex}"></div>
+                            </div>
                         </div>
-                        <div class="color-picker-v" ref="brightness">
-                            <div :class="{'color-picker-v-thumb': true, 'color-picker-animation': isOpened && animation}" :style="{transform: 'translateY(' + domV + 'px)'}" @mousedown="valMousedown($event)" @touchstart="valMousedown($event)"></div>
+                        <div class="color-picker-h" @mousedown="hueMousedown($event)" @touchstart="hueMousedown($event)">
+                            <img src="${HUE_IMAGE_DATAURL}" ref="hueImage">
+                            <div :class="{'color-picker-h-thumb': true, 'color-picker-animation': isOpened && animation}" :style="{transform: 'translateY(' + domH + 'px)', 'background-color': hueInHex}"></div>
                         </div>
-                        <div :class="{'color-picker-sv-main': true, 'color-picker-animation': isOpened && animation}" ref="svMain" :style="{'background-color': hueInHex}" @mousedown="svMousedown($event)" @touchstart="svMousedown($event)">
-                            <div :class="{'color-picker-saturation-line': true, 'color-picker-animation': isOpened && animation}" :style="{transform: 'translateX(' + domS + 'px)'}"></div>
-                            <div :class="{'color-picker-brightness-line': true, 'color-picker-animation': isOpened && animation}" :style="{transform: 'translateY(' + domV + 'px)'}"></div>
-                            <div :class="{'color-picker-sv-point': true, 'color-picker-animation': isOpened && animation}" :style="{transform: 'translate('+(domS - 10)+'px, '+(domV + 10)+'px)', 'background-color': currentColorInHex}"></div>
+                        <ul class="color-picker-tabs">
+                            <li v-for="(label, i) in tabLabels" :class="{selected: selectedTab === i}" @click="selectedTab = i">{{label}}</li>
+                        </ul>
+                        <div :class="{'color-picker-tab-content': true, selected: selectedTab === 0}" @input="setColorByRGB(rgb)">
+                            <label><span>R(赤成分):</span><input type="number" v-model.number="rgb.r" min="0" max="255"></label>
+                            <label><span>G(緑成分):</span><input type="number" v-model.number="rgb.g" min="0" max="255"></label>
+                            <label><span>B(青成分):</span><input type="number" v-model.number="rgb.b" min="0" max="255"></label>
                         </div>
-                    </div>
-                    <div class="color-picker-h" @mousedown="hueMousedown($event)" @touchstart="hueMousedown($event)">
-                        <img src="${HUE_IMAGE_DATAURL}" ref="hueImage">
-                        <div :class="{'color-picker-h-thumb': true, 'color-picker-animation': isOpened && animation}" :style="{transform: 'translateY(' + domH + 'px)', 'background-color': hueInHex}"></div>
-                    </div>
-                    <ul class="color-picker-tabs">
-                        <li v-for="(label, i) in tabLabels" :class="{selected: selectedTab === i}" @click="selectedTab = i">{{label}}</li>
-                    </ul>
-                    <div :class="{'color-picker-tab-content': true, selected: selectedTab === 0}" @input="setColorByRGB(rgb)">
-                        <label><span>R(赤成分):</span><input type="number" v-model.number="rgb.r" min="0" max="255"></label>
-                        <label><span>G(緑成分):</span><input type="number" v-model.number="rgb.g" min="0" max="255"></label>
-                        <label><span>B(青成分):</span><input type="number" v-model.number="rgb.b" min="0" max="255"></label>
-                    </div>
-                    <div :class="{'color-picker-tab-content': true, selected: selectedTab === 1}" @input="updateRGB() + updateDOMHSV()">
-                        <label><span>H(色相):</span><input type="number" v-model.number="hsv.h" min="0" max="360"></label>
-                        <label><span>S(彩度):</span><input type="number" v-model.number="hsv.s" min="0" max="100"></label>
-                        <label><span>V(明度):</span><input type="number" v-model.number="hsv.v" min="0" max="100"></label>
-                    </div>
-                    <div :class="{'color-picker-tab-content': true, selected: selectedTab === 2}">
-                        <label><span>16進カラーコード:</span><input type="text" :value="currentColorInHex" @change="setColorByHex($event.target.value)" min="0" max="360"></label>
-                    </div>
-                    <div class="color-picker-buttons">
-                        <div class="color-picker-preview">
-                            <div>色プレビュー</div>
-                            <div :class="{'color-picker-preview-color': true, 'color-picker-animation': isOpened && animation}" :style="{'background-color': currentColorInHex}"></div>
+                        <div :class="{'color-picker-tab-content': true, selected: selectedTab === 1}" @input="updateRGB() + updateDOMHSV()">
+                            <label><span>H(色相):</span><input type="number" v-model.number="hsv.h" min="0" max="360"></label>
+                            <label><span>S(彩度):</span><input type="number" v-model.number="hsv.s" min="0" max="100"></label>
+                            <label><span>V(明度):</span><input type="number" v-model.number="hsv.v" min="0" max="100"></label>
                         </div>
-                        <button @click.prevent="cancel">キャンセル</button>
-                        <button @click.prevent="ok">決定</button>
+                        <div :class="{'color-picker-tab-content': true, selected: selectedTab === 2}">
+                            <label><span>16進カラーコード:</span><input type="text" :value="currentColorInHex" @change="setColorByHex($event.target.value)" min="0" max="360"></label>
+                        </div>
+                        <div class="color-picker-buttons">
+                            <div class="color-picker-preview">
+                                <div>色プレビュー</div>
+                                <div :class="{'color-picker-preview-color': true, 'color-picker-animation': isOpened && animation}" :style="{'background-color': currentColorInHex}"></div>
+                            </div>
+                            <button @click.prevent="cancel">キャンセル</button>
+                            <button @click.prevent="ok">決定</button>
+                        </div>
                     </div>
                 </div>
             </div>`,
