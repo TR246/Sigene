@@ -6,3 +6,20 @@ main > * {
 img {
     max-width: 100%;
 }
+main {
+    max-width: 800px;
+    margin: 0 auto 1em;
+}
+hr {
+    margin: 1em 0;
+    border-top: 2px solid #9E9E9E;
+}
+hr ~ * {
+    text-align: left;
+}
+hr ~ h2 {
+    margin-top: 1em;
+}
+hr ~ ul {
+    padding-left: 2em;
+}

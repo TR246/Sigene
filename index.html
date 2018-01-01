@@ -398,7 +398,7 @@
                         <div>
                             <label class="inline">
                                 <div class="label-text">色</div>
-                                <color-picker v-model="routeColors[i]" :list="routeColors" @change="update"></color-picker>
+                                <color-picker v-model="routeColors[i]" :list="routeColorList" @change="update"></color-picker>
                             </label>
                             <button @click.prevent="routeColors.splice(i, 1) + update()">削除</button>
                         </div>

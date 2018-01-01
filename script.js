@@ -1237,7 +1237,7 @@
                 {color: "#F2D01F", name: "鶴見線"},
                 {color: "#EB5A28", name: "武蔵野線"}
             ],
-            routeColors: [
+            routeColorList: [
                 {color: "#80C241", name: "山手線"},
                 {color: "#00B48D", name: "埼京線・川越線"},
                 {color: "#00B2E5", name: "京浜東北・根岸線"},
