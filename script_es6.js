@@ -1015,3 +1015,4 @@
         eventTimer = setTimeout(() => update.call(vm), 300);
     });
 })();
+-
