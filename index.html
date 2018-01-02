@@ -161,7 +161,7 @@
                         <div class="invalid-message">アルファベット3文字で入力してください</div>
                     </label>
                     <button v-if="numbering" @click.prevent="sta.numberings.push({text: 'JX 00', color: '#006400'}) + update()" :disabled="2 <= sta.numberings.length">ナンバリングを追加</button>
-                    <label v-for="(n, i) in sta.numberings" v-if="numbering">
+                    <div class="label" v-for="(n, i) in sta.numberings" v-if="numbering">
                         <div class="label-text">ナンバリング{{i + 1}}</div>
                         <input
                             type="text"
@@ -172,7 +172,7 @@
                         <div class="invalid-message">アルファベット2文字と数字2桁で入力してください</div>
                         <input type="color" v-model="n.color" list="numberingColorList">
                         <button @click.prevent="sta.numberings.splice(i, 1) + update()" :disabled="sta.enableTlc && sta.numberings.length <= 1">削除</button>                        
-                    </label>
+                    </div>
                 </section>
                 <section>
                     <h2>左駅{{branchLeft? " 上" : ""}}</h2>
