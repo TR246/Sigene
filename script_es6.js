@@ -1,7 +1,7 @@
 (() => {
-    const FONT_JAPANESE = "'Mplus 1p', sans-serif";
+    const FONT_JAPANESE = "'Mplus 1p', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'M+ 1p', sans-serif";
     const FONT_HELVETICA = "'Helvetica', 'Arial', sans-serif";
-    const FONT_FRUTIGER = "'Lato', 'Cabin', sans-serif";
+    const FONT_FRUTIGER = "'Lato', 'Cabin', 'Open Sans', sans-serif";
     const FONT_CHINESE = "'Noto Sans SC', sans-serif";
     const FONT_KOREAN = "'Noto Sans KR', sans-serif";
     const defaultData = () => ({
@@ -619,9 +619,9 @@
                 colorCtx.fillStyle = data.black;
                 colorCtx.fillRect(Math.ceil(x + r) + 2, Math.ceil(y + r) + 2, Math.floor(innerSize) - 4, Math.floor(innerSize) - 4);
                 maskCtx.textAlign = "center";
-                maskCtx.font = `bold ${r * 3}px 'Lato', 'Cabin', sans-serif`;
+                maskCtx.font = `bold ${r * 3}px ${FONT_FRUTIGER}`;
                 maskCtx.fillText(route, x + size / 2, y + 4 * r);
-                maskCtx.font = `bold ${r * 4.4}px 'Open Sans', sans-serif`;
+                maskCtx.font = `bold ${r * 4.4}px ${FONT_FRUTIGER}`;
                 maskCtx.fillText(number, x + size / 2, y + 8 * r);
             };
 
@@ -1001,7 +1001,7 @@
     //ウェブフォント
     WebFont.load({
         google: {
-            families: ["Open+Sans:700&text=0123456789MS", "Lato:700&text=ABDEFGHIJLMNOPQRSTUVWXYZ", "Cabin:700&text=CK"]
+            families: ["Open+Sans:700&text=0123456789MS", "Lato:700&text=ABDEFGHIJLNOPQRTUVWXYZ", "Cabin:700&text=CK"]
         },
         active(){
             update.call(vm);
