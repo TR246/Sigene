@@ -86,7 +86,7 @@
     });
 
     //離脱確認
-    window.addEventListener("beforeunload", e => e.returnValue = "このページから離れてもよろしいですか");
+    //window.addEventListener("beforeunload", e => e.returnValue = "このページから離れてもよろしいですか");
 
     //専用フォーマット
     const desig1 = {
@@ -657,9 +657,9 @@
                 //4ヶ国語表記
                 drawText({
                     x: hw + kanjiWidth / 2 + 65,
-                    y: lineTop - 200,
+                    y: lineTop - 195,
                     text: data.sta.name.chinese,
-                    size: 40,
+                    size: 50,
                     font: FONT_CHINESE,
                     align: "left"
                 });
@@ -667,7 +667,7 @@
                     x: hw + kanjiWidth / 2 + 65,
                     y: lineTop - 120,
                     text: data.sta.name.korean,
-                    size: 40,
+                    size: 50,
                     font: FONT_KOREAN,
                     align: "left"
                 });
@@ -888,7 +888,13 @@
                 korean: false
             },
             shareURL: "",
-            numberingColors: [
+            blackList: [
+                {color: "#1A1A1A", name: "黒"},
+                {color: "#333333", name: "初期灰色"}
+            ],
+            cp1: "#000000",
+            cp2: "#FFFFFF",
+            numberingColorList: [
                 {color: "#F0862B", name: "東海道線"},
                 {color: "#1069B4", name: "横須賀・総武快速線"},
                 {color: "#1DAED1", name: "京浜東北・根岸線"},
