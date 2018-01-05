@@ -168,9 +168,9 @@
                             type="text"
                             v-model="n.text"
                             class="narrow-input"
-                            pattern="^[A-Za-zＡ-Ｚａ-ｚ]{2}\s*(-\s*)?[0-9０-９]{2}$"
+                            pattern="^[A-Za-zＡ-Ｚａ-ｚ]+\s*(-\s*)?[0-9０-９]{2,}$"
                             @input="n.text = formatUppercase($event.target.value)">
-                        <div class="invalid-message">アルファベット2文字と数字2桁で入力してください</div>
+                        <div class="invalid-message">アルファベット1文字以上と数字2桁以上で入力してください</div>
                         <input type="color" v-model="n.color" list="numberingColorList">
                         <button @click.prevent="sta.numberings.splice(i, 1) + update()" :disabled="sta.enableTlc && sta.numberings.length <= 1">削除</button>                        
                     </div>
@@ -212,9 +212,9 @@
                                     type="text"
                                     v-model="n.text"
                                     class="narrow-input"
-                                    pattern="^[A-Za-zＡ-Ｚａ-ｚ]{2}\s*(-\s*)?[0-9０-９]{2}$"
+                                    pattern="^[A-Za-zＡ-Ｚａ-ｚ]+\s*(-\s*)?[0-9０-９]{2,}$"
                                     @input="n.text = formatUppercase($event.target.value)">
-                                <div class="invalid-message">アルファベット2文字と数字2桁で入力してください</div>
+                                <div class="invalid-message">アルファベット1文字以上と数字2桁以上で入力してください</div>
                             </label>
                             <label class="inline">
                                 <input type="color" v-model="n.color" list="numberingColorList">
@@ -260,9 +260,9 @@
                                     type="text"
                                     v-model="n.text"
                                     class="narrow-input"
-                                    pattern="^[A-Za-zＡ-Ｚａ-ｚ]{2}\s*(-\s*)?[0-9０-９]{2}$"
+                                    pattern="^[A-Za-zＡ-Ｚａ-ｚ]+\s*(-\s*)?[0-9０-９]{2,}$"
                                     @input="n.text = formatUppercase($event.target.value)">
-                                <div class="invalid-message">アルファベット2文字と数字2桁で入力してください</div>
+                                <div class="invalid-message">アルファベット1文字以上と数字2桁以上で入力してください</div>
                             </label>
                             <label class="inline">
                                 <input type="color" v-model="n.color" list="numberingColorList">
@@ -308,9 +308,9 @@
                                     type="text"
                                     v-model="n.text"
                                     class="narrow-input"
-                                    pattern="^[A-Za-zＡ-Ｚａ-ｚ]{2}\s*(-\s*)?[0-9０-９]{2}$"
+                                    pattern="^[A-Za-zＡ-Ｚａ-ｚ]+\s*(-\s*)?[0-9０-９]{2,}$"
                                     @input="n.text = formatUppercase($event.target.value)">
-                                <div class="invalid-message">アルファベット2文字と数字2桁で入力してください</div>
+                                <div class="invalid-message">アルファベット1文字以上と数字2桁以上で入力してください</div>
                             </label>
                             <label class="inline">
                                 <input type="color" v-model="n.color" list="numberingColorList">
@@ -356,9 +356,9 @@
                                     type="text"
                                     v-model="n.text"
                                     class="narrow-input"
-                                    pattern="^[A-Za-zＡ-Ｚａ-ｚ]{2}\s*(-\s*)?[0-9０-９]{2}$"
+                                    pattern="^[A-Za-zＡ-Ｚａ-ｚ]+\s*(-\s*)?[0-9０-９]{2,}$"
                                     @input="n.text = formatUppercase($event.target.value)">
-                                <div class="invalid-message">アルファベット2文字と数字2桁で入力してください</div>
+                                <div class="invalid-message">アルファベット1文字以上と数字2桁以上で入力してください</div>
                             </label>
                             <label class="inline">
                                 <input type="color" v-model="n.color" list="numberingColorList">
