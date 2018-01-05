@@ -1,7 +1,7 @@
 (() => {
     const FONT_JAPANESE = "'Mplus 1p', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'M+ 1p', sans-serif";
     const FONT_HELVETICA = "'Helvetica', 'Arial', sans-serif";
-    const FONT_FRUTIGER = "'Lato', 'Cabin', 'Open Sans', sans-serif";
+    const FONT_FRUTIGER = "Cabin', 'Open Sans', 'Lato', 'sans-serif";
     const FONT_CHINESE = "'Noto Sans SC', sans-serif";
     const FONT_KOREAN = "'Noto Sans KR', sans-serif";
     const defaultData = () => ({
