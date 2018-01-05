@@ -1006,8 +1006,16 @@
 
     //ウェブフォント
     WebFont.load({
-        google: {
+        /*google: {
             families: ["Open+Sans:700&text=0123456789MS", "Lato:700&text=ABDEFGHIJLNOPQRTUVWXYZ", "Cabin:700&text=CK"]
+        },*/
+        custom: {
+            families: ["Open Sans", "Lato", "Cabin"],
+            urls: [
+                "https://fonts.googleapis.com/css?family=Open+Sans:700&text=0123456789MS",
+                "https://fonts.googleapis.com/css?family=Lato:700&text=ABDEFGHIJLNOPQRTUVWXYZ",
+                "https://fonts.googleapis.com/css?family=Cabin:700&text=CK"
+            ]
         },
         active(){
             update.call(vm);
