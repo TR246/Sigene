@@ -86,7 +86,7 @@
     });
 
     //離脱確認
-    //window.addEventListener("beforeunload", e => e.returnValue = "このページから離れてもよろしいですか");
+    window.addEventListener("beforeunload", e => e.returnValue = "このページから離れてもよろしいですか");
 
     //専用フォーマット
     const desig1 = {
@@ -596,8 +596,8 @@
             const drawNumbering = (x, y, size, text, color, tlc) => {
                 const r = size * 0.1;
                 const innerSize = size - 2 * r;
-                const route = text.match(/[A-Z]{2}/g)[0];
-                const number = text.match(/[0-9]{2}/g)[0];
+                const route = text.match(/[A-Z]+/g)[0];
+                const number = text.match(/[0-9]{2,}/g)[0];
                 if(tlc){
                     //角丸正方形
                     roundRect(colorCtx, x, y, size, size, r);
