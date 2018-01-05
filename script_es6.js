@@ -620,9 +620,9 @@
                 colorCtx.fillRect(Math.ceil(x + r) + 2, Math.ceil(y + r) + 2, Math.floor(innerSize) - 4, Math.floor(innerSize) - 4);
                 maskCtx.textAlign = "center";
                 maskCtx.font = `bold ${r * 3}px ${FONT_FRUTIGER}`;
-                maskCtx.fillText(route, x + size / 2, y + 4 * r);
+                maskCtx.fillText(route, x + size / 2, y + 4 * r, innerSize * 0.9);
                 maskCtx.font = `bold ${r * 4.4}px ${FONT_FRUTIGER}`;
-                maskCtx.fillText(number, x + size / 2, y + 8 * r);
+                maskCtx.fillText(number, x + size / 2, y + 8 * r, innerSize * 0.9);
             };
 
             //漢字
