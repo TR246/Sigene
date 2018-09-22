@@ -950,7 +950,7 @@
                 const self = this;
                 const config = {
                     japanese: {
-                        families: ["Mplus 1p:n5,n8"],
+                        families: ["M PLUS 1p:n5,n8"],
                         urls: ["https://fonts.googleapis.com/css?family=M+PLUS+1p"]
                     },
                     chinese: {
