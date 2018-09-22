@@ -951,7 +951,7 @@
                 const config = {
                     japanese: {
                         families: ["Mplus 1p:n5,n8"],
-                        urls: ["https://fonts.googleapis.com/earlyaccess/mplus1p.css"]
+                        urls: ["https://fonts.googleapis.com/css?family=M+PLUS+1p"]
                     },
                     chinese: {
                         families: ["Noto Sans SC:n4"],
